@@ -10,12 +10,13 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.Random;
+import java.util.Arrays;
 
 /**
  * <p>
@@ -26,7 +27,10 @@ import java.util.Random;
  */
 public class MapGenerator {
 
-    private static final int[][] HOME_TILE = readImage("home_tile.bmp");
+    private static final int[][] HOME_TILE = readImage("home_tile.png");
+    private static final int[][] EXPLORED_TILE = readImage("explored_tile.png");
+    private static final int[][] UNEXPLORED_TILE = readImage("unexplored_tile.png");
+    private static final int[][] CURRENT_TILE = readImage("current_tile.png");
     private final World world;
     private final Vector2 center;
 
@@ -37,7 +41,7 @@ public class MapGenerator {
 
     public String generate() {
         try {
-            return upload(draw());
+            return upload(drawMap());
         } catch (IOException | ParseException e) {
             BlockRPG.getInstance().getLogger().severe("Error while generating image " + e);
             e.printStackTrace();
@@ -80,6 +84,47 @@ public class MapGenerator {
         JSONObject object = (JSONObject) parser.parse(stb.toString());
 
         return (String) ((JSONObject) object.get("data")).get("link");
+    }
+
+    private BufferedImage drawMap() {
+        BufferedImage image = new BufferedImage(503, 503, BufferedImage.TYPE_INT_RGB);
+        int realX, realY = 0;
+        for (int y = 0; y < 10; y++) {
+            realY += 3;
+            realX = 3;
+            for (int x = 0; x < 10; x++) {
+                int py = realY;
+                Vector2 tile = translate(realX, realY);
+                int[][] texture = getTileTexture(tile);
+                if (texture == null) {
+                    continue;
+                }
+                for (int tx = 0; tx < 47; tx++) {
+                    for (int ty = 0; ty < 47; ty++) {
+                        image.setRGB(realX, realY, texture[tx][ty]);
+                        realY += 1;
+                    }
+                    realX += 1;
+                    realY = py;
+                }
+                realY = py;
+                realX += 3;
+            }
+            realY += 47;
+        }
+        return image;
+    }
+
+    private int[][] getTileTexture(Vector2 tile) {
+        if (tile.equals(this.center)) {
+            return CURRENT_TILE;
+        } else if (world.getTile(tile) != null && world.getTile(tile).getProperty("homeTile") != null) {
+            return HOME_TILE;
+        } else if (this.world.isExplored(tile)) {
+            return EXPLORED_TILE;
+        } else {
+            return UNEXPLORED_TILE;
+        }
     }
 
     private BufferedImage draw() {
@@ -127,6 +172,15 @@ public class MapGenerator {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return new int[image.getWidth()][image.getHeight()];
+        if (image == null) {
+            return new int[0][0];
+        }
+        int[][] pixels = new int[image.getWidth()][image.getHeight()];
+        for (int xPixel = 0; xPixel < image.getWidth(); xPixel++) {
+            for (int yPixel = 0; yPixel < image.getHeight(); yPixel++) {
+                pixels[xPixel][yPixel] = image.getRGB(xPixel, yPixel);
+            }
+        }
+        return pixels;
     }
 }
