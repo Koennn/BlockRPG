@@ -1,6 +1,7 @@
 package me.koenn.blockrpg.commands;
 
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
 
 /**
@@ -18,5 +19,7 @@ public interface ICommand {
 
     int getRequiredArgs();
 
-    Message execute(User executor, String[] args);
+    boolean isAlias();
+
+    Message execute(User executor, MessageChannel channel, String[] args);
 }

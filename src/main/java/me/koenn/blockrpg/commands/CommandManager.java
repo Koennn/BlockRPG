@@ -2,7 +2,7 @@ package me.koenn.blockrpg.commands;
 
 import me.koenn.blockrpg.util.registry.Registry;
 import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
@@ -20,9 +20,10 @@ public class CommandManager extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        final Message message = event.getMessage();
-        final String content = message.getContent();
+        this.interpret(event.getMessage().getContent(), event.getAuthor(), event.getChannel());
+    }
 
+    private void interpret(final String content, final User executor, final MessageChannel channel) {
         if (!content.startsWith("\\")) {
             return;
         }
@@ -41,14 +42,53 @@ public class CommandManager extends ListenerAdapter {
             return;
         }
 
-        final User executor = event.getAuthor();
-        final TextChannel channel = event.getTextChannel();
+        channel.sendTyping().queue(aVoid -> {
+            Message message = command.execute(executor, channel, args);
+            if (message != null) {
+                channel.sendMessage(message).queue();
+            }
+        });
+    }
 
-        channel.sendTyping().queue();
-        channel.sendMessage(command.execute(executor, args)).queue();
+    public static void registerAlias(ICommand command, String alias) {
+        COMMAND_REGISTRY.register(new ICommand() {
+            @Override
+            public String getCommand() {
+                return alias;
+            }
+
+            @Override
+            public String getDescription() {
+                return command.getDescription();
+            }
+
+            @Override
+            public int getRequiredArgs() {
+                return command.getRequiredArgs();
+            }
+
+            @Override
+            public boolean isAlias() {
+                return true;
+            }
+
+            @Override
+            public Message execute(User executor, MessageChannel channel, String[] args) {
+                return command.execute(executor, channel, args);
+            }
+        });
     }
 
     public static void registerCommands() {
         COMMAND_REGISTRY.register(new HelpCommand());
+        COMMAND_REGISTRY.register(new StatsCommand());
+        ICommand inventoryCommand = new InventoryCommand();
+        COMMAND_REGISTRY.register(inventoryCommand);
+        registerAlias(inventoryCommand, "inv");
+        COMMAND_REGISTRY.register(new ExploreCommand());
+        COMMAND_REGISTRY.register(new TravelCommand());
+        COMMAND_REGISTRY.register(new MoveCommand());
+        COMMAND_REGISTRY.register(new MapCommand());
+        COMMAND_REGISTRY.register(new TestCommand());
     }
 }

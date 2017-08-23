@@ -19,6 +19,7 @@ public class Inventory {
 
     public Inventory() {
         this(new ArrayList<>());
+        this.items.add(new ItemStack(ItemType.BASIC_SWORD));
     }
 
     public Inventory(JSONObject inventory) {
@@ -45,5 +46,13 @@ public class Inventory {
         }
         jsonObject.put("items", items);
         return jsonObject;
+    }
+
+    public String getFormattedString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (ItemStack itemStack : this.items) {
+            stringBuilder.append(itemStack.getAmount()).append("x ").append(itemStack.getType().getName()).append("\n");
+        }
+        return stringBuilder.toString().trim();
     }
 }

@@ -1,13 +1,14 @@
 package me.koenn.blockrpg.commands;
 
+import me.koenn.blockrpg.BlockRPG;
+import me.koenn.blockrpg.data.Stats;
+import me.koenn.blockrpg.items.Inventory;
 import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.entities.MessageEmbed;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.entities.impl.MessageEmbedImpl;
 
 import java.awt.*;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 
 /**
@@ -17,16 +18,16 @@ import java.util.ArrayList;
  * Proprietary and confidential
  * Written by Koen Willemse, June 2017
  */
-public class HelpCommand implements ICommand {
+public class InventoryCommand implements ICommand {
 
     @Override
     public String getCommand() {
-        return "help";
+        return "inventory";
     }
 
     @Override
     public String getDescription() {
-        return "Opens up this menu :)";
+        return "See what's in your inventory.";
     }
 
     @Override
@@ -41,18 +42,23 @@ public class HelpCommand implements ICommand {
 
     @Override
     public Message execute(User executor, MessageChannel channel, String[] args) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (ICommand command : CommandManager.COMMAND_REGISTRY.getRegisteredObjects()) {
-            if (command.isAlias()) {
-                continue;
-            }
-            stringBuilder.append("**\\").append(command.getCommand()).append(":**\n").append(command.getDescription()).append("\n");
+        Stats stats;
+        BlockRPG blockRPG = BlockRPG.getInstance();
+        if (blockRPG.hasStats(executor)) {
+            stats = blockRPG.getStats(executor);
+        } else {
+            return new MessageBuilder().append("Use **\\stats** first to start playing!").build();
         }
-        String help = stringBuilder.toString().trim();
+
+        if (stats == null) {
+            throw new NullPointerException("Unable to find users stats");
+        }
+
         return new MessageBuilder().setEmbed(new MessageEmbedImpl()
-                .setTitle("BlockRPG Help Menu")
-                .setDescription(help)
                 .setColor(Color.GREEN)
+                .setTitle("Inventory:")
+                .setAuthor(new MessageEmbed.AuthorInfo(executor.getName(), "", executor.getEffectiveAvatarUrl(), ""))
+                .setDescription(((Inventory) stats.get("1inventory")).getFormattedString())
                 .setFooter(new MessageEmbed.Footer("BlockRPG - BETA", "", ""))
                 .setFields(new ArrayList<>())
         ).build();

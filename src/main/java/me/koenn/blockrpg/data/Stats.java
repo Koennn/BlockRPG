@@ -2,6 +2,14 @@ package me.koenn.blockrpg.data;
 
 import me.koenn.blockrpg.items.Inventory;
 import me.koenn.blockrpg.items.ItemStack;
+import me.koenn.blockrpg.items.ItemType;
+import me.koenn.blockrpg.util.FancyString;
+import me.koenn.blockrpg.util.Formatter;
+import org.json.simple.JSONObject;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * <p>
@@ -12,90 +20,77 @@ import me.koenn.blockrpg.items.ItemStack;
  */
 public class Stats {
 
-    private int health;
-    private Inventory inventory;
-    private ItemStack weapon;
-    private ItemStack[] armor;
-    private int level;
-    private int kills;
-    private int deaths;
-    private int takedowns;
-    private SkillPoints skillPoints;
+    private final long userId;
+    private LinkedHashMap<String, Object> stats = new LinkedHashMap<>();
 
-    public Stats() {
-        this.inventory = new Inventory();
-        this.armor = new ItemStack[4];
+    public Stats(long userId) {
+        this.userId = userId;
+        Inventory inventory = new Inventory();
+        inventory.getItems().add(new ItemStack(ItemType.TEST_ITEM));
+        this.stats.put("0health", 100);
+        this.stats.put("1inventory", inventory);
+        this.stats.put("2weapon", null);
+        this.stats.put("3level", 1);
+        this.stats.put("4kills", 0);
+        this.stats.put("5deaths", 0);
+        this.stats.put("6skillPoints", new SkillPoints());
+        this.stats.put("7userId", userId);
     }
 
-    public Stats(int health, Inventory inventory, ItemStack weapon, ItemStack[] armor, int level, int kills, int deaths, int takedowns, SkillPoints skillPoints) {
-        this.health = health;
-        this.inventory = inventory;
-        this.weapon = weapon;
-        this.armor = armor;
-        this.level = level;
-        this.kills = kills;
-        this.deaths = deaths;
-        this.takedowns = takedowns;
-        this.skillPoints = skillPoints;
+    public Stats(long userId, JSONObject statsObject) {
+        this.userId = userId;
+        HashMap<Integer, Map.Entry<String, Object>> unorderedStats = new HashMap<>();
+        for (Object statName : statsObject.keySet()) {
+            Map.Entry<String, Object> entry = new Map.Entry<String, Object>() {
+                @Override
+                public String getKey() {
+                    return (String) statName;
+                }
+
+                @Override
+                public Object getValue() {
+                    return Formatter.readable((String) statName, statsObject.get(statName));
+                }
+
+                @Override
+                public Object setValue(Object value) {
+                    return null;
+                }
+            };
+            unorderedStats.put(Integer.parseInt(((String) statName).substring(0, 1)), entry);
+        }
+
+        for (int i = 0; i < unorderedStats.size(); i++) {
+            this.stats.put(unorderedStats.get(i).getKey(), unorderedStats.get(i).getValue());
+        }
     }
 
-    public int getHealth() {
-        return health;
+    public String getFormattedStats() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String statName : this.stats.keySet()) {
+            if (statName.equals("7userId")) {
+                continue;
+            }
+            stringBuilder.append("**").append(new FancyString(statName.substring(1))).append(":** ").append(Formatter.format(stats.get(statName))).append("\n");
+        }
+        return stringBuilder.toString().trim();
     }
 
-    public void setHealth(int health) {
-        this.health = health;
+    public JSONObject toJSON() {
+        JSONObject jsonObject = new JSONObject();
+        int index = 0;
+        for (String statName : this.stats.keySet()) {
+            jsonObject.put(index + statName, Formatter.savable(this.stats.get(statName)));
+            index++;
+        }
+        return jsonObject;
     }
 
-    public ItemStack getWeapon() {
-        return weapon;
+    public Object get(String name) {
+        return this.stats.get(name);
     }
 
-    public void setWeapon(ItemStack weapon) {
-        this.weapon = weapon;
-    }
-
-    public int getLevel() {
-        return level;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
-    }
-
-    public int getKills() {
-        return kills;
-    }
-
-    public void setKills(int kills) {
-        this.kills = kills;
-    }
-
-    public int getDeaths() {
-        return deaths;
-    }
-
-    public void setDeaths(int deaths) {
-        this.deaths = deaths;
-    }
-
-    public int getTakedowns() {
-        return takedowns;
-    }
-
-    public void setTakedowns(int takedowns) {
-        this.takedowns = takedowns;
-    }
-
-    public Inventory getInventory() {
-        return inventory;
-    }
-
-    public ItemStack[] getArmor() {
-        return armor;
-    }
-
-    public SkillPoints getSkillPoints() {
-        return skillPoints;
+    public long getUserId() {
+        return userId;
     }
 }

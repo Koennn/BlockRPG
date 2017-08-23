@@ -1,5 +1,9 @@
 package me.koenn.blockrpg.items;
 
+import me.koenn.blockrpg.battle.Battle;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.User;
+
 /**
  * <p>
  * Copyright (C) Koenn - All Rights Reserved
@@ -7,7 +11,9 @@ package me.koenn.blockrpg.items;
  * Proprietary and confidential
  * Written by Koen Willemse, June 2017
  */
-public enum Material {
+public interface WeaponAction {
 
+    String getActionName();
 
+    Message execute(User executor, Battle battle);
 }

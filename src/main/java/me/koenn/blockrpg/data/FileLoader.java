@@ -1,7 +1,6 @@
 package me.koenn.blockrpg.data;
 
-import me.koenn.blockrpg.items.Inventory;
-import me.koenn.blockrpg.items.ItemStack;
+import me.koenn.blockrpg.world.World;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -19,60 +18,48 @@ import java.util.List;
 public final class FileLoader {
 
     public static List<Stats> loadStats(File file) {
-        JSONManager jsonManager = new JSONManager(file.getName());
-        JSONArray statsArray = (JSONArray) jsonManager.getFromBody("stats");
-        List<Stats> statsList = new ArrayList<>();
+        final JSONManager jsonManager = new JSONManager(file.getName());
+        if (!jsonManager.getBody().containsKey("stats")) {
+            return new ArrayList<>();
+        }
+        final JSONArray statsArray = (JSONArray) jsonManager.getFromBody("stats");
+        final List<Stats> statsList = new ArrayList<>();
         for (Object statsObject : statsArray) {
-            JSONObject statsJson = (JSONObject) statsObject;
-            final int health = Math.toIntExact((Long) statsJson.get("health"));
-            final Inventory inventory = new Inventory((JSONObject) statsJson.get("inventory"));
-            final ItemStack weapon = new ItemStack((JSONObject) statsJson.get("weapon"));
-            final ItemStack[] armor = loadArmor((JSONObject) statsJson.get("armor"));
-            final int level = Math.toIntExact((Long) statsJson.get("level"));
-            final int kills = Math.toIntExact((Long) statsJson.get("kills"));
-            final int deaths = Math.toIntExact((Long) statsJson.get("deaths"));
-            final int takedowns = Math.toIntExact((Long) statsJson.get("takedowns"));
-            final SkillPoints skillPoints = new SkillPoints((JSONObject) statsJson.get("skillPoints"));
-            statsList.add(new Stats(health, inventory, weapon, armor, level, kills, deaths, takedowns, skillPoints));
+            final JSONObject userStats = (JSONObject) statsObject;
+            final long userId = (long) userStats.get("7userId");
+            statsList.add(new Stats(userId, userStats));
         }
         return statsList;
     }
 
-    public static void save(File file, List<Stats> statsList) {
-        JSONManager jsonManager = new JSONManager(file.getName());
-        JSONArray statsArray = new JSONArray();
-        for (Stats stats : statsList) {
-            JSONObject statsObject = new JSONObject();
-            statsObject.put("health", stats.getHealth());
-            statsObject.put("inventory", stats.getInventory().getJson());
-            statsObject.put("weapon", stats.getWeapon().getJson());
-            statsObject.put("armor", saveArmor(stats.getArmor()));
-            statsObject.put("level", stats.getLevel());
-            statsObject.put("kills", stats.getKills());
-            statsObject.put("deaths", stats.getDeaths());
-            statsObject.put("takedowns", stats.getTakedowns());
-            statsObject.put("skillPoints", stats.getSkillPoints().getJson());
-            statsArray.add(statsObject);
+    public static void saveStats(File file, List<Stats> statsList) {
+        /*final JSONManager jsonManager = new JSONManager(file.getName());
+        final JSONArray statsArray = new JSONArray();
+        for (final Stats stats : statsList) {
+            statsArray.add(stats.toJSON());
         }
-        jsonManager.setInBody("stats", statsArray);
+        jsonManager.setInBody("stats", statsArray);*/
     }
 
-    private static ItemStack[] loadArmor(JSONObject armor) {
-        ItemStack[] armorArray = new ItemStack[4];
-        JSONArray jsonArray = (JSONArray) armor.get("items");
-        for (int i = 0; i < armorArray.length; i++) {
-            armorArray[i] = new ItemStack((JSONObject) jsonArray.get(i));
+    public static List<World> loadWorlds(File file) {
+        final JSONManager jsonManager = new JSONManager(file.getName());
+        if (!jsonManager.getBody().containsKey("worlds")) {
+            return new ArrayList<>();
         }
-        return armorArray;
+        final JSONArray worlds = (JSONArray) jsonManager.getFromBody("worlds");
+        final List<World> worldList = new ArrayList<>();
+        for (Object worldObject : worlds) {
+            worldList.add(new World((JSONObject) worldObject));
+        }
+        return worldList;
     }
 
-    private static JSONObject saveArmor(ItemStack[] armor) {
-        JSONObject armorObject = new JSONObject();
-        JSONArray items = new JSONArray();
-        for (ItemStack itemStack : armor) {
-            items.add(itemStack.getJson());
+    public static void saveWorlds(File file, List<World> worldList) {
+        /*final JSONManager jsonManager = new JSONManager(file.getName());
+        final JSONArray worldsArray = new JSONArray();
+        for (final World world : worldList) {
+            worldsArray.add(world.toJson());
         }
-        armorObject.put("items", items);
-        return armorObject;
+        jsonManager.setInBody("worlds", worldsArray);*/
     }
 }

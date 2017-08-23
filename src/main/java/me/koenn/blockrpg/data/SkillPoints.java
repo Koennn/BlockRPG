@@ -22,11 +22,11 @@ public class SkillPoints {
 
     public SkillPoints(JSONObject skillPoints) {
         this(
-                Integer.parseInt((String) skillPoints.get("strength")),
-                Integer.parseInt((String) skillPoints.get("luck")),
-                Integer.parseInt((String) skillPoints.get("endurance")),
-                Integer.parseInt((String) skillPoints.get("intelligence")),
-                Integer.parseInt((String) skillPoints.get("charisma"))
+                Math.toIntExact((long) skillPoints.get("strength")),
+                Math.toIntExact((long) skillPoints.get("luck")),
+                Math.toIntExact((long) skillPoints.get("endurance")),
+                Math.toIntExact((long) skillPoints.get("intelligence")),
+                Math.toIntExact((long) skillPoints.get("charisma"))
         );
     }
 
