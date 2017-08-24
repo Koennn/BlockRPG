@@ -2,6 +2,7 @@ package me.koenn.blockrpg.commands;
 
 import me.koenn.blockrpg.BlockRPG;
 import me.koenn.blockrpg.util.Direction;
+import me.koenn.blockrpg.util.MapGenerator;
 import me.koenn.blockrpg.world.Tile;
 import me.koenn.blockrpg.world.Vector2;
 import me.koenn.blockrpg.world.World;
@@ -61,11 +62,14 @@ public class TravelCommand implements ICommand {
         }
         blockRPG.setUserLocation(executor, moved);
         Tile tile = world.getTile(moved);
+        MapGenerator.cachedMaps.clearCache(executor);
+        String image = new MapGenerator(BlockRPG.getInstance().getWorld(executor), executor).generate(executor);
         return new MessageBuilder().setEmbed(new MessageEmbedImpl()
                 .setColor(Color.GREEN)
                 .setTitle("You traveled to the following tile:")
                 .setAuthor(new MessageEmbed.AuthorInfo(executor.getName(), "", executor.getEffectiveAvatarUrl(), ""))
                 .setDescription(tile.toString())
+                .setImage(new MessageEmbed.ImageInfo(image, "", 500, 500))
                 .setFooter(new MessageEmbed.Footer("BlockRPG - BETA", "", ""))
                 .setFields(new ArrayList<>())
         ).build();

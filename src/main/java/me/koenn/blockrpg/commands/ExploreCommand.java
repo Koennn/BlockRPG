@@ -79,7 +79,8 @@ public class ExploreCommand implements ICommand {
         } else {
             Tile tile = world.explore(moved);
             blockRPG.setUserLocation(executor, tile.getLocation());
-            String image = new MapGenerator(BlockRPG.getInstance().getWorld(executor), executor).generate();
+            MapGenerator.cachedMaps.clearCache(executor);
+            String image = new MapGenerator(BlockRPG.getInstance().getWorld(executor), executor).generate(executor);
             return new MessageBuilder().setEmbed(new MessageEmbedImpl()
                     .setColor(Color.GREEN)
                     .setTitle("You discovered a new tile:")

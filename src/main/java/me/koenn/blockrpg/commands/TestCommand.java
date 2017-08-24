@@ -43,7 +43,7 @@ public class TestCommand implements ICommand {
 
     @Override
     public Message execute(User executor, MessageChannel channel, String[] args) {
-        String image = new MapGenerator(BlockRPG.getInstance().getWorld(executor), executor).generate();
+        String image = new MapGenerator(BlockRPG.getInstance().getWorld(executor), executor).generate(executor);
         return new MessageBuilder().setEmbed(new MessageEmbedImpl()
                 .setColor(Color.GREEN)
                 .setImage(new MessageEmbed.ImageInfo(image, "", 500, 500))

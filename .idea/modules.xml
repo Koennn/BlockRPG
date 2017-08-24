@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/blockrpg.iml" filepath="$PROJECT_DIR$/blockrpg.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BlockRPG.iml" filepath="$PROJECT_DIR$/BlockRPG.iml" />
     </modules>
   </component>
 </project>

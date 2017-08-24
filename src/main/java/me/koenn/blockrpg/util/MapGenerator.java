@@ -10,22 +10,20 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.Arrays;
 
 /**
  * <p>
- * Copyright (C) Koenn - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by Koen Willemse, June 2017
+ * Copyright (C) Koenn - All Rights Reserved Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential Written by Koen Willemse, June 2017
  */
 public class MapGenerator {
+
+    public static final Cache<User, String> cachedMaps = new Cache<>();
 
     private static final int[][] HOME_TILE = readImage("home_tile.png");
     private static final int[][] EXPLORED_TILE = readImage("explored_tile.png");
@@ -39,9 +37,14 @@ public class MapGenerator {
         this.center = BlockRPG.getInstance().getUserLocation(owner);
     }
 
-    public String generate() {
+    public String generate(User owner) {
         try {
-            return upload(drawMap());
+            if (cachedMaps.isCached(owner)) {
+                return cachedMaps.get(owner);
+            }
+            String map = upload(drawMap());
+            cachedMaps.put(owner, map);
+            return map;
         } catch (IOException | ParseException e) {
             BlockRPG.getInstance().getLogger().severe("Error while generating image " + e);
             e.printStackTrace();
@@ -63,7 +66,6 @@ public class MapGenerator {
         conn.setDoInput(true);
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Authorization", "Client-ID d56526adb592623");
-        conn.setRequestMethod("POST");
         conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
         conn.connect();
@@ -96,9 +98,6 @@ public class MapGenerator {
                 int py = realY;
                 Vector2 tile = translate(realX, realY);
                 int[][] texture = getTileTexture(tile);
-                if (texture == null) {
-                    continue;
-                }
                 for (int tx = 0; tx < 47; tx++) {
                     for (int ty = 0; ty < 47; ty++) {
                         image.setRGB(realX, realY, texture[tx][ty]);
@@ -115,6 +114,14 @@ public class MapGenerator {
         return image;
     }
 
+    private Vector2 translate(int x, int y) {
+        int cornerX = this.center.x - 4;
+        int cornerY = this.center.y - 4;
+        int scaledX = (x / 50) + cornerX;
+        int scaledY = (y / 50) + cornerY;
+        return new Vector2(scaledX, scaledY);
+    }
+
     private int[][] getTileTexture(Vector2 tile) {
         if (tile.equals(this.center)) {
             return CURRENT_TILE;
@@ -127,43 +134,7 @@ public class MapGenerator {
         }
     }
 
-    private BufferedImage draw() {
-        BufferedImage image = new BufferedImage(500, 500, BufferedImage.TYPE_INT_RGB);
-        for (int x = 0; x < 500; x++) {
-            for (int y = 0; y < 500; y++) {
-                if ((x - 1) % 50 == 0 || (x) % 50 == 0 || (x + 1) % 50 == 0 || (y - 1) % 50 == 0 || (y) % 50 == 0 || (y + 1) % 50 == 0) {
-                    continue;
-                }
-                Vector2 tile = translate(x, y);
-                image.setRGB(x, y, getTileColor(tile));
-            }
-        }
-        return image;
-    }
 
-    private int getTileColor(Vector2 tile) {
-        int red = 255 << 16;
-        int green = 255 << 8;
-        int blue = 255;
-        int yellow = (255 << 16) | (255 << 8);
-        if (tile.equals(this.center)) {
-            return green;
-        } else if (world.getTile(tile) != null && world.getTile(tile).getProperty("homeTile") != null) {
-            return yellow;
-        } else if (this.world.isExplored(tile)) {
-            return blue;
-        } else {
-            return red;
-        }
-    }
-
-    private Vector2 translate(int x, int y) {
-        int cornerX = this.center.x - 4;
-        int cornerY = this.center.y - 4;
-        int scaledX = (x / 50) + cornerX;
-        int scaledY = (y / 50) + cornerY;
-        return new Vector2(scaledX, scaledY);
-    }
 
     private static int[][] readImage(String file) {
         BufferedImage image = null;
