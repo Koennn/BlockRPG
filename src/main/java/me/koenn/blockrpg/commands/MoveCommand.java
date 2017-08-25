@@ -4,6 +4,7 @@ import me.koenn.blockrpg.BlockRPG;
 import me.koenn.blockrpg.battle.Battle;
 import me.koenn.blockrpg.items.WeaponAction;
 import net.dv8tion.jda.core.MessageBuilder;
+import net.dv8tion.jda.core.entities.Channel;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
@@ -52,6 +53,11 @@ public class MoveCommand implements ICommand {
         }
 
         WeaponAction move = battle.getUserMoves().get(moveId);
-        return battle.executeMove(move);
+        return battle.executeMove(move, channel);
+    }
+
+    @Override
+    public void callback(Channel channel) {
+
     }
 }

@@ -3,10 +3,7 @@ package me.koenn.blockrpg.commands;
 import me.koenn.blockrpg.BlockRPG;
 import me.koenn.blockrpg.util.MapGenerator;
 import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.entities.MessageEmbed;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.entities.impl.MessageEmbedImpl;
 
 import java.awt.*;
@@ -53,5 +50,10 @@ public class MapCommand implements ICommand {
                 .setFooter(new MessageEmbed.Footer("BlockRPG - BETA", "", ""))
                 .setFields(new ArrayList<>())
         ).build();
+    }
+
+    @Override
+    public void callback(Channel channel) {
+
     }
 }

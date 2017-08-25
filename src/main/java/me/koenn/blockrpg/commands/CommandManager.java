@@ -1,6 +1,7 @@
 package me.koenn.blockrpg.commands;
 
 import me.koenn.blockrpg.util.registry.Registry;
+import net.dv8tion.jda.core.entities.Channel;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
@@ -75,6 +76,11 @@ public class CommandManager extends ListenerAdapter {
             @Override
             public Message execute(User executor, MessageChannel channel, String[] args) {
                 return command.execute(executor, channel, args);
+            }
+
+            @Override
+            public void callback(Channel channel) {
+
             }
         });
     }

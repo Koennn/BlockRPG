@@ -1,7 +1,9 @@
 package me.koenn.blockrpg.items;
 
 import me.koenn.blockrpg.battle.Battle;
+import me.koenn.blockrpg.battle.CreatureType;
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
 
 /**
@@ -15,5 +17,7 @@ public interface WeaponAction {
 
     String getActionName();
 
-    Message execute(User executor, Battle battle);
+    Message execute(User executor, MessageChannel channel, Battle battle);
+
+    Message executeCreature(CreatureType creature, User user, Battle battle);
 }

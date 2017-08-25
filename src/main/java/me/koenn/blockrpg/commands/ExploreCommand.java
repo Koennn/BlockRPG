@@ -12,14 +12,10 @@ import me.koenn.blockrpg.world.Tile;
 import me.koenn.blockrpg.world.Vector2;
 import me.koenn.blockrpg.world.World;
 import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.entities.MessageEmbed;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.entities.impl.MessageEmbedImpl;
 
 import java.awt.*;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -71,7 +67,7 @@ public class ExploreCommand implements ICommand {
         if (world.isExplored(moved)) {
             return new MessageBuilder().append("You already explored this tile! Use **\\travel** to get there.").build();
         }
-        if (random.nextInt(4) == -1) {
+        if (random.nextInt(4) == 1) {
             Battle battle = new Battle(executor, channel, new Creature(CreatureType.SCARY_MONSTER, 50, new ItemStack(ItemType.BASIC_SWORD)), world.explore(moved));
             blockRPG.getUserBattles().put(executor.getIdLong(), battle);
             battle.start();
@@ -91,6 +87,11 @@ public class ExploreCommand implements ICommand {
                     .setFields(new ArrayList<>())
             ).build();
         }
+
+    }
+
+    @Override
+    public void callback(Channel channel) {
 
     }
 }

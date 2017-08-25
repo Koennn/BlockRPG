@@ -30,6 +30,7 @@ public class Battle {
     private final Creature opponent;
     private final Tile location;
     private final LinkedHashMap<Integer, WeaponAction> userMoves = new LinkedHashMap<>();
+    private boolean turn;
 
     public Battle(User user, MessageChannel channel, Creature opponent, Tile location) {
         this.user = user;
@@ -64,13 +65,19 @@ public class Battle {
         ).build()).queue();
     }
 
-    public Message executeMove(WeaponAction move) {
-        Message message = move.execute(this.user, this);
+    public Message executeMove(WeaponAction move, MessageChannel channel) {
+        Message message = move.execute(this.user, channel, this);
         if (message != null) {
             return message;
         } else {
             return new MessageBuilder().append("Error while executing move ").append(move).build();
         }
+    }
+
+    public void endTurn(MessageChannel channel) {
+        this.turn = false;
+        channel.sendTyping();
+        channel.sendMessage(this.opponent.getType().doMove(this));
     }
 
     public User getUser() {
@@ -91,5 +98,9 @@ public class Battle {
 
     public LinkedHashMap<Integer, WeaponAction> getUserMoves() {
         return userMoves;
+    }
+
+    public boolean isTurn() {
+        return turn;
     }
 }

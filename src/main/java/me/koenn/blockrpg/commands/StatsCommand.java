@@ -9,7 +9,6 @@ import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.entities.impl.MessageEmbedImpl;
 
 import java.awt.*;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 
 /**
@@ -72,5 +71,10 @@ public class StatsCommand implements ICommand {
                 .setFooter(new MessageEmbed.Footer("BlockRPG - BETA", "", ""))
                 .setFields(new ArrayList<>())
         ).build();
+    }
+
+    @Override
+    public void callback(Channel channel) {
+
     }
 }
