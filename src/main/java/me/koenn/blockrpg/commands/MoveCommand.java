@@ -4,7 +4,6 @@ import me.koenn.blockrpg.BlockRPG;
 import me.koenn.blockrpg.battle.Battle;
 import me.koenn.blockrpg.items.WeaponAction;
 import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.entities.Channel;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
@@ -57,7 +56,12 @@ public class MoveCommand implements ICommand {
     }
 
     @Override
-    public void callback(Channel channel) {
+    public void callback(User executor, MessageChannel channel) {
+        Battle battle = BlockRPG.getInstance().getUserBattles().get(executor.getIdLong());
+        if (battle == null) {
+            return;
+        }
 
+        battle.endTurn(channel);
     }
 }

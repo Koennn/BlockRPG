@@ -1,13 +1,9 @@
 package me.koenn.blockrpg.commands;
 
-import me.koenn.blockrpg.BlockRPG;
-import me.koenn.blockrpg.util.MapGenerator;
 import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.entities.impl.MessageEmbedImpl;
-
-import java.awt.*;
-import java.util.ArrayList;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.core.entities.User;
 
 /**
  * <p>
@@ -40,16 +36,11 @@ public class TestCommand implements ICommand {
 
     @Override
     public Message execute(User executor, MessageChannel channel, String[] args) {
-        String image = new MapGenerator(BlockRPG.getInstance().getWorld(executor), executor).generate(executor);
-        return new MessageBuilder().setEmbed(new MessageEmbedImpl()
-                .setColor(Color.GREEN)
-                .setImage(new MessageEmbed.ImageInfo(image, "", 500, 500))
-                .setFields(new ArrayList<>())
-        ).build();
+        return new MessageBuilder().append("**\"It's not a bug, it's a feature\"**").build();
     }
 
     @Override
-    public void callback(Channel channel) {
+    public void callback(User executor, MessageChannel channel) {
 
     }
 }

@@ -2,12 +2,12 @@ package me.koenn.blockrpg.commands;
 
 import me.koenn.blockrpg.BlockRPG;
 import me.koenn.blockrpg.util.MapGenerator;
+import me.koenn.blockrpg.util.RPGMessageEmbed;
 import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.entities.impl.MessageEmbedImpl;
-
-import java.awt.*;
-import java.util.ArrayList;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.core.entities.MessageEmbed;
+import net.dv8tion.jda.core.entities.User;
 
 /**
  * <p>
@@ -40,20 +40,17 @@ public class MapCommand implements ICommand {
 
     @Override
     public Message execute(User executor, MessageChannel channel, String[] args) {
+        if (!BlockRPG.getInstance().hasWorld(executor)) {
+            return new MessageBuilder().append("Use **\\stats** first to start playing!").build();
+        }
         String image = new MapGenerator(BlockRPG.getInstance().getWorld(executor), executor).generate(executor);
-        return new MessageBuilder().setEmbed(new MessageEmbedImpl()
-                .setColor(Color.GREEN)
-                .setTitle("Map overview:")
-                .setAuthor(new MessageEmbed.AuthorInfo(executor.getName(), executor.getEffectiveAvatarUrl(), executor.getEffectiveAvatarUrl(), ""))
-                .setImage(new MessageEmbed.ImageInfo(image, "", 500, 500))
-                .setDescription("**Green:** You\n**Red:** Unexplored Tile\n**Blue:** Explored Tile\n**Yellow:** Home Tile")
-                .setFooter(new MessageEmbed.Footer("BlockRPG - BETA", "", ""))
-                .setFields(new ArrayList<>())
-        ).build();
+        return new MessageBuilder().setEmbed(new RPGMessageEmbed("Map overview:",
+                "**Green:** You\n**Red:** Unexplored Tile\n**Blue:** Explored Tile\n**Yellow:** Home Tile", executor
+        ).setImage(new MessageEmbed.ImageInfo(image, "", 500, 500))).build();
     }
 
     @Override
-    public void callback(Channel channel) {
+    public void callback(User executor, MessageChannel channel) {
 
     }
 }

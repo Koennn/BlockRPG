@@ -5,7 +5,10 @@ import me.koenn.blockrpg.data.Stats;
 import me.koenn.blockrpg.world.Vector2;
 import me.koenn.blockrpg.world.World;
 import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.core.entities.MessageEmbed;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.entities.impl.MessageEmbedImpl;
 
 import java.awt.*;
@@ -74,7 +77,7 @@ public class StatsCommand implements ICommand {
     }
 
     @Override
-    public void callback(Channel channel) {
+    public void callback(User executor, MessageChannel channel) {
 
     }
 }

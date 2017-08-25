@@ -8,15 +8,16 @@ import me.koenn.blockrpg.items.ItemStack;
 import me.koenn.blockrpg.items.ItemType;
 import me.koenn.blockrpg.util.Direction;
 import me.koenn.blockrpg.util.MapGenerator;
+import me.koenn.blockrpg.util.RPGMessageEmbed;
 import me.koenn.blockrpg.world.Tile;
 import me.koenn.blockrpg.world.Vector2;
 import me.koenn.blockrpg.world.World;
 import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.entities.impl.MessageEmbedImpl;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.core.entities.MessageEmbed;
+import net.dv8tion.jda.core.entities.User;
 
-import java.awt.*;
-import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -77,21 +78,16 @@ public class ExploreCommand implements ICommand {
             blockRPG.setUserLocation(executor, tile.getLocation());
             MapGenerator.cachedMaps.clearCache(executor);
             String image = new MapGenerator(BlockRPG.getInstance().getWorld(executor), executor).generate(executor);
-            return new MessageBuilder().setEmbed(new MessageEmbedImpl()
-                    .setColor(Color.GREEN)
-                    .setTitle("You discovered a new tile:")
-                    .setAuthor(new MessageEmbed.AuthorInfo(executor.getName(), executor.getEffectiveAvatarUrl(), executor.getEffectiveAvatarUrl(), ""))
-                    .setDescription(tile.toString())
-                    .setImage(new MessageEmbed.ImageInfo(image, "", 500, 500))
-                    .setFooter(new MessageEmbed.Footer("BlockRPG - BETA", "", ""))
-                    .setFields(new ArrayList<>())
-            ).build();
+            return new MessageBuilder().setEmbed(new RPGMessageEmbed(
+                    "You discovered a new tile:",
+                    tile.toString(), executor
+            ).setImage(new MessageEmbed.ImageInfo(image, "", 500, 500))).build();
         }
 
     }
 
     @Override
-    public void callback(Channel channel) {
+    public void callback(User executor, MessageChannel channel) {
 
     }
 }
