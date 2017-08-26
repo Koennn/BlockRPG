@@ -42,10 +42,10 @@ public class CommandManager extends ListenerAdapter {
             return;
         }
 
-        channel.sendTyping().queue(aVoid -> {
+        channel.sendTyping().queue(void1 -> {
             Message message = command.execute(executor, channel, args);
             if (message != null) {
-                channel.sendMessage(message).queue();
+                channel.sendMessage(message).queue(void2 -> command.callback(executor, channel));
             }
         });
     }

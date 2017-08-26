@@ -2,6 +2,8 @@ package me.koenn.blockrpg.util;
 
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import me.koenn.blockrpg.BlockRPG;
+import me.koenn.blockrpg.image.ImageGenerator;
+import me.koenn.blockrpg.image.Texture;
 import me.koenn.blockrpg.world.Vector2;
 import me.koenn.blockrpg.world.World;
 import net.dv8tion.jda.core.entities.User;
@@ -25,10 +27,10 @@ public class MapGenerator {
 
     public static final Cache<User, String> cachedMaps = new Cache<>();
 
-    private static final int[][] HOME_TILE = readImage("home_tile.png");
-    private static final int[][] EXPLORED_TILE = readImage("explored_tile.png");
-    private static final int[][] UNEXPLORED_TILE = readImage("unexplored_tile.png");
-    private static final int[][] CURRENT_TILE = readImage("current_tile.png");
+    private static final Texture HOME_TILE = new Texture("home_tile", "home_tile.png");
+    private static final Texture EXPLORED_TILE = new Texture("explored_tile", "explored_tile.png");
+    private static final Texture UNEXPLORED_TILE = new Texture("unexplored_tile", "unexplored_tile.png");
+    private static final Texture CURRENT_TILE = new Texture("current_tile", "current_tile.png");
     private final World world;
     private final Vector2 center;
 
@@ -38,7 +40,7 @@ public class MapGenerator {
     }
 
     public String generate(User owner) {
-        try {
+        /*try {
             if (cachedMaps.isCached(owner)) {
                 return cachedMaps.get(owner);
             }
@@ -49,7 +51,28 @@ public class MapGenerator {
             BlockRPG.getInstance().getLogger().severe("Error while generating image " + e);
             e.printStackTrace();
             return null;
+        }*/
+        if (cachedMaps.isCached(owner)) {
+            return cachedMaps.get(owner);
         }
+        long totalTime = System.currentTimeMillis();
+        long drawTime = System.currentTimeMillis();
+        ImageGenerator generator = new ImageGenerator(503, 503);
+        int realX, realY = 3;
+        for (int y = 0; y < 10; y++) {
+            realX = 3;
+            for (int x = 0; x < 10; x++) {
+                Vector2 tile = translate(realX, realY);
+                generator.draw(realX, realY, getTileTexture(tile));
+                realX += 50;
+            }
+            realY += 50;
+        }
+        System.out.println("Draw time: " + (System.currentTimeMillis() - drawTime) + "ms");
+        String image = generator.generate();
+        cachedMaps.put(owner, image);
+        System.out.println("Total time: " + (System.currentTimeMillis() - totalTime) + "ms");
+        return image;
     }
 
     private String upload(BufferedImage image) throws IOException, ParseException {
@@ -97,10 +120,10 @@ public class MapGenerator {
             for (int x = 0; x < 10; x++) {
                 int py = realY;
                 Vector2 tile = translate(realX, realY);
-                int[][] texture = getTileTexture(tile);
+                //int[][] texture = getTileTexture(tile);
                 for (int tx = 0; tx < 47; tx++) {
                     for (int ty = 0; ty < 47; ty++) {
-                        image.setRGB(realX, realY, texture[tx][ty]);
+                        //image.setRGB(realX, realY, texture[tx][ty]);
                         realY += 1;
                     }
                     realX += 1;
@@ -122,7 +145,7 @@ public class MapGenerator {
         return new Vector2(scaledX, scaledY);
     }
 
-    private int[][] getTileTexture(Vector2 tile) {
+    private Texture getTileTexture(Vector2 tile) {
         if (tile.equals(this.center)) {
             return CURRENT_TILE;
         } else if (world.getTile(tile) != null && world.getTile(tile).getProperty("homeTile") != null) {
@@ -133,7 +156,6 @@ public class MapGenerator {
             return UNEXPLORED_TILE;
         }
     }
-
 
 
     private static int[][] readImage(String file) {

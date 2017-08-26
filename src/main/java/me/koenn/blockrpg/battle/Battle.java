@@ -76,8 +76,8 @@ public class Battle {
 
     public void endTurn(MessageChannel channel) {
         this.turn = false;
-        channel.sendTyping();
-        channel.sendMessage(this.opponent.getType().doMove(this));
+        channel.sendTyping().queue();
+        channel.sendMessage(this.opponent.getType().doMove(this)).queue();
     }
 
     public User getUser() {
