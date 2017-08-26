@@ -25,10 +25,17 @@ public class ImageGenerator {
         this.result = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
     }
 
+    public ImageGenerator(int width, int height, boolean alpha) {
+        this.result = new BufferedImage(width, height, alpha ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB);
+    }
+
     public void draw(int x, int y, Texture texture) {
         int[][] pixels = texture.getPixels();
         for (int dx = 0; dx < pixels.length; dx++) {
             for (int dy = 0; dy < pixels[0].length; dy++) {
+                if (pixels[dx][dy] == 0) {
+                    continue;
+                }
                 this.result.setRGB(x + dx, y + dy, pixels[dx][dy]);
             }
         }

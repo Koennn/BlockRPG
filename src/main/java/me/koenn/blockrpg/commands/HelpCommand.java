@@ -1,14 +1,10 @@
 package me.koenn.blockrpg.commands;
 
+import me.koenn.blockrpg.util.RPGMessageEmbed;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.entities.impl.MessageEmbedImpl;
-
-import java.awt.*;
-import java.util.ArrayList;
 
 /**
  * <p>
@@ -46,16 +42,12 @@ public class HelpCommand implements ICommand {
             if (command.isAlias()) {
                 continue;
             }
-            stringBuilder.append("**\\").append(command.getCommand()).append(":**\n").append(command.getDescription()).append("\n");
+            stringBuilder.append("**`\\").append(command.getCommand()).append("`:**\n").append(command.getDescription()).append("\n");
         }
         String help = stringBuilder.toString().trim();
-        return new MessageBuilder().setEmbed(new MessageEmbedImpl()
-                .setTitle("BlockRPG Help Menu")
-                .setDescription(help)
-                .setColor(Color.GREEN)
-                .setFooter(new MessageEmbed.Footer("BlockRPG - BETA", "", ""))
-                .setFields(new ArrayList<>())
-        ).build();
+        return new MessageBuilder().setEmbed(new RPGMessageEmbed(
+                "BlockRPG Help Menu", help, executor
+        )).build();
     }
 
     @Override

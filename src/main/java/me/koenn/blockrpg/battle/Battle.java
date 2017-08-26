@@ -39,7 +39,7 @@ public class Battle {
         this.location = location;
     }
 
-    public void start() {
+    public Message start() {
         StringBuilder yourMoves = new StringBuilder();
         int index = 1;
         for (ItemStack item : ((Inventory) BlockRPG.getInstance().getStats(user).get("1inventory")).getItems()) {
@@ -51,7 +51,7 @@ public class Battle {
                 }
             }
         }
-        this.channel.sendMessage(new MessageBuilder().setEmbed(new MessageEmbedImpl()
+        return new MessageBuilder().setEmbed(new MessageEmbedImpl()
                 .setColor(Color.GREEN)
                 .setTitle("You encountered a **" + this.opponent.getType().getName() + "**")
                 .setAuthor(new MessageEmbed.AuthorInfo(this.user.getName(), this.user.getEffectiveAvatarUrl(), this.user.getEffectiveAvatarUrl(), ""))
@@ -62,7 +62,7 @@ public class Battle {
                 )
                 .setFooter(new MessageEmbed.Footer("BlockRPG - BETA", "", ""))
                 .setFields(new ArrayList<>())
-        ).build()).queue();
+        ).build();
     }
 
     public Message executeMove(WeaponAction move, MessageChannel channel) {

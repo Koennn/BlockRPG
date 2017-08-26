@@ -85,14 +85,12 @@ public class CommandManager extends ListenerAdapter {
     }
 
     public static void registerCommands() {
-        COMMAND_REGISTRY.register(new HelpCommand());
+        registerAlias(COMMAND_REGISTRY.register(new HelpCommand()), "?");
         COMMAND_REGISTRY.register(new StatsCommand());
-        ICommand inventoryCommand = new InventoryCommand();
-        COMMAND_REGISTRY.register(inventoryCommand);
-        registerAlias(inventoryCommand, "inv");
+        registerAlias(COMMAND_REGISTRY.register(new InventoryCommand()), "inv");
         COMMAND_REGISTRY.register(new ExploreCommand());
         COMMAND_REGISTRY.register(new TravelCommand());
-        COMMAND_REGISTRY.register(new MoveCommand());
+        registerAlias(COMMAND_REGISTRY.register(new MoveCommand()), "mv");
         COMMAND_REGISTRY.register(new MapCommand());
         COMMAND_REGISTRY.register(new TestCommand());
     }

@@ -21,8 +21,9 @@ public final class Registry<T> {
         this.registryKey = registryKey;
     }
 
-    public void register(T object) {
+    public T register(T object) {
         this.registeredObjects.add(object);
+        return object;
     }
 
     public void unregister(T object) {

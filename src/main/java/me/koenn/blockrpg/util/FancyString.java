@@ -1,7 +1,7 @@
 package me.koenn.blockrpg.util;
 
 /**
- * Simple class to automaticly capitalise, translate color codes and format strings.
+ * Simple class to automatically capitalise, translate color codes and format strings.
  * Simply create an instance of the class and call the <code>toString</code> method to get the formatted string.
  * <p>
  * Copyright (C) Koenn - All Rights Reserved

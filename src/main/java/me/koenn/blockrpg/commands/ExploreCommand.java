@@ -1,11 +1,6 @@
 package me.koenn.blockrpg.commands;
 
 import me.koenn.blockrpg.BlockRPG;
-import me.koenn.blockrpg.battle.Battle;
-import me.koenn.blockrpg.battle.Creature;
-import me.koenn.blockrpg.battle.CreatureType;
-import me.koenn.blockrpg.items.ItemStack;
-import me.koenn.blockrpg.items.ItemType;
 import me.koenn.blockrpg.util.Direction;
 import me.koenn.blockrpg.util.MapGenerator;
 import me.koenn.blockrpg.util.RPGMessageEmbed;
@@ -62,28 +57,28 @@ public class ExploreCommand implements ICommand {
             throw new NullPointerException("Unable to find users stats");
         }
 
-        Direction direction = Direction.valueOf(args[0].toUpperCase());
-        Vector2 location = blockRPG.getUserLocation(executor).clone();
-        Vector2 moved = direction.move(location);
+        if (BlockRPG.getInstance().getUserBattles().get(executor.getIdLong()) != null) {
+            return new MessageBuilder().append("You are in a battle right now!").build();
+        }
+
+        Vector2 moved = Direction.valueOf(args[0].toUpperCase()).move(blockRPG.getUserLocation(executor).clone());
         if (world.isExplored(moved)) {
             return new MessageBuilder().append("You already explored this tile! Use **\\travel** to get there.").build();
         }
-        if (random.nextInt(4) == 1) {
-            Battle battle = new Battle(executor, channel, new Creature(CreatureType.SCARY_MONSTER, 50, new ItemStack(ItemType.BASIC_SWORD)), world.explore(moved));
-            blockRPG.getUserBattles().put(executor.getIdLong(), battle);
-            battle.start();
-            return null;
-        } else {
-            Tile tile = world.explore(moved);
-            blockRPG.setUserLocation(executor, tile.getLocation());
-            MapGenerator.cachedMaps.clearCache(executor);
-            String image = new MapGenerator(BlockRPG.getInstance().getWorld(executor), executor).generate(executor);
-            return new MessageBuilder().setEmbed(new RPGMessageEmbed(
-                    "You discovered a new tile:",
-                    tile.toString(), executor
-            ).setImage(new MessageEmbed.ImageInfo(image, "", 500, 500))).build();
+
+        Message battleMessage = world.getBattle(executor, channel, world.getTile(moved));
+        if (battleMessage != null) {
+            return battleMessage;
         }
 
+        Tile tile = world.explore(moved);
+        blockRPG.setUserLocation(executor, tile.getLocation());
+        MapGenerator.cachedMaps.clearCache(executor);
+        String image = new MapGenerator(BlockRPG.getInstance().getWorld(executor), executor).generate(executor);
+        return new MessageBuilder().setEmbed(new RPGMessageEmbed(
+                "You discovered a new tile:",
+                tile.toString(), executor
+        ).setImage(new MessageEmbed.ImageInfo(image, "", 500, 500))).build();
     }
 
     @Override

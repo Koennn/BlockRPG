@@ -1,9 +1,19 @@
 package me.koenn.blockrpg.world;
 
+import me.koenn.blockrpg.BlockRPG;
+import me.koenn.blockrpg.battle.Battle;
+import me.koenn.blockrpg.battle.Creature;
+import me.koenn.blockrpg.battle.CreatureType;
+import me.koenn.blockrpg.items.ItemStack;
+import me.koenn.blockrpg.items.ItemType;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.core.entities.User;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.util.HashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * <p>
@@ -56,6 +66,15 @@ public class World {
             }
         }
         return null;
+    }
+
+    public Message getBattle(User user, MessageChannel channel, Tile tile) {
+        if (ThreadLocalRandom.current().nextInt(10) != 1) {
+            return null;
+        }
+        Battle battle = new Battle(user, channel, new Creature(CreatureType.SCARY_MONSTER, 50, new ItemStack(ItemType.BASIC_SWORD)), tile);
+        BlockRPG.getInstance().getUserBattles().put(user.getIdLong(), battle);
+        return battle.start();
     }
 
     public JSONObject toJson() {

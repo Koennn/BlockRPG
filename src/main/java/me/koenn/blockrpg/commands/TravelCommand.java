@@ -56,12 +56,15 @@ public class TravelCommand implements ICommand {
             throw new NullPointerException("Unable to find users stats");
         }
 
-        Direction direction = Direction.valueOf(args[0].toUpperCase());
-        Vector2 location = blockRPG.getUserLocation(executor).clone();
-        Vector2 moved = direction.move(location);
+        if (BlockRPG.getInstance().getUserBattles().get(executor.getIdLong()) != null) {
+            return new MessageBuilder().append("You are in a battle right now!").build();
+        }
+
+        Vector2 moved = Direction.valueOf(args[0].toUpperCase()).move(blockRPG.getUserLocation(executor).clone());
         if (!world.isExplored(moved)) {
             return new MessageBuilder().append("You haven't explored this tile! Use **\\explore** to explore it.").build();
         }
+
         blockRPG.setUserLocation(executor, moved);
         Tile tile = world.getTile(moved);
         MapGenerator.cachedMaps.clearCache(executor);

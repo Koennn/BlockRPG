@@ -1,5 +1,8 @@
 package me.koenn.blockrpg.commands;
 
+import me.koenn.blockrpg.image.ImageGenerator;
+import me.koenn.blockrpg.image.Texture;
+import me.koenn.blockrpg.util.SkinRenderer;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
@@ -36,7 +39,11 @@ public class TestCommand implements ICommand {
 
     @Override
     public Message execute(User executor, MessageChannel channel, String[] args) {
-        return new MessageBuilder().append("**\"It's not a bug, it's a feature\"**").build();
+        ImageGenerator generator = new ImageGenerator(889, 500, true);
+        generator.draw(0, 0, new Texture("bg", "bg.png"));
+        generator.draw(100, 100, new Texture("skin", SkinRenderer.getSkinRender(SkinRenderer.getSkinURL("Steve"))));
+        generator.draw(500, 200, new Texture("creature", "thinkofdeath.png"));
+        return new MessageBuilder().append(generator.generate()).build();
     }
 
     @Override

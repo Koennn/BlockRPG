@@ -15,6 +15,19 @@ public class Texture {
     private final String label;
     private int[][] pixels;
 
+    public Texture(String label, BufferedImage image) {
+        this.label = label;
+        if (image == null) {
+            return;
+        }
+        this.pixels = new int[image.getWidth()][image.getHeight()];
+        for (int xPixel = 0; xPixel < image.getWidth(); xPixel++) {
+            for (int yPixel = 0; yPixel < image.getHeight(); yPixel++) {
+                pixels[xPixel][yPixel] = image.getRGB(xPixel, yPixel);
+            }
+        }
+    }
+
     public Texture(String label, String fileName) {
         this.label = label;
         BufferedImage image = null;
