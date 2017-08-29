@@ -1,6 +1,5 @@
 package me.koenn.blockrpg.util;
 
-import javafx.scene.layout.Pane;
 import me.koenn.blockrpg.data.SkillPoints;
 import me.koenn.blockrpg.items.Inventory;
 import me.koenn.blockrpg.items.ItemStack;

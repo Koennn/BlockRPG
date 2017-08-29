@@ -43,7 +43,7 @@ public class TestCommand implements ICommand {
         generator.draw(0, 0, new Texture("bg", "bg.png"));
         generator.draw(100, 100, new Texture("skin", SkinRenderer.getSkinRender(SkinRenderer.getSkinURL("Steve"))));
         generator.draw(500, 200, new Texture("creature", "thinkofdeath.png"));
-        return new MessageBuilder().append(generator.generate()).build();
+        return new MessageBuilder().append(generator.generate(executor)).build();
     }
 
     @Override

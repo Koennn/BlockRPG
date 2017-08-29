@@ -1,6 +1,7 @@
 package me.koenn.blockrpg.image;
 
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+import net.dv8tion.jda.core.entities.User;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -41,16 +42,16 @@ public class ImageGenerator {
         }
     }
 
-    public String generate() {
+    public String generate(User user) {
         try {
-            return upload(this.result);
+            return upload(this.result, user);
         } catch (Exception e) {
             e.printStackTrace();
             return "https://blog.sqlauthority.com/wp-content/uploads/2015/10/errorstop.png";
         }
     }
 
-    private String upload(BufferedImage image) throws IOException, ParseException {
+    private String upload(BufferedImage image, User user) throws IOException, ParseException {
         long encodeTime = System.currentTimeMillis();
 
         ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
@@ -91,5 +92,14 @@ public class ImageGenerator {
 
         System.out.println("Upload time: " + (System.currentTimeMillis() - uploadTime) + "ms");
         return (String) ((JSONObject) object.get("data")).get("link");
+    }
+
+    private String uploadLocal(BufferedImage image, User user) throws IOException {
+        ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
+        ImageIO.write(image, "png", byteArray);
+        ImageServer.images.put(user.getIdLong(), byteArray.toByteArray());
+        String url = String.format("http://localhost:8080/image?discordId=%s", user.getIdLong());
+        System.out.println(url);
+        return url;
     }
 }

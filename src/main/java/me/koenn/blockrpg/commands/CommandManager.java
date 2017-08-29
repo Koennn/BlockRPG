@@ -18,38 +18,6 @@ public class CommandManager extends ListenerAdapter {
 
     public static final Registry<ICommand> COMMAND_REGISTRY = new Registry<>(ICommand::getCommand);
 
-    @Override
-    public void onMessageReceived(MessageReceivedEvent event) {
-        this.interpret(event.getMessage().getContent(), event.getAuthor(), event.getChannel());
-    }
-
-    private void interpret(final String content, final User executor, final MessageChannel channel) {
-        if (!content.startsWith("\\")) {
-            return;
-        }
-
-        final String[] split = content.split(" ");
-        final String[] args = new String[split.length - 1];
-        System.arraycopy(split, 1, args, 0, args.length);
-        final String commandString = split[0].replace("\\", "");
-
-        ICommand command = COMMAND_REGISTRY.get(commandString);
-        if (command == null) {
-            return;
-        }
-
-        if (command.getRequiredArgs() > args.length) {
-            return;
-        }
-
-        channel.sendTyping().queue(void1 -> {
-            Message message = command.execute(executor, channel, args);
-            if (message != null) {
-                channel.sendMessage(message).queue(void2 -> command.callback(executor, channel));
-            }
-        });
-    }
-
     public static void registerAlias(ICommand command, String alias) {
         COMMAND_REGISTRY.register(new ICommand() {
             @Override
@@ -93,5 +61,37 @@ public class CommandManager extends ListenerAdapter {
         registerAlias(COMMAND_REGISTRY.register(new MoveCommand()), "mv");
         COMMAND_REGISTRY.register(new MapCommand());
         COMMAND_REGISTRY.register(new TestCommand());
+    }
+
+    @Override
+    public void onMessageReceived(MessageReceivedEvent event) {
+        this.interpret(event.getMessage().getContent(), event.getAuthor(), event.getChannel());
+    }
+
+    private void interpret(final String content, final User executor, final MessageChannel channel) {
+        if (!content.startsWith("\\")) {
+            return;
+        }
+
+        final String[] split = content.split(" ");
+        final String[] args = new String[split.length - 1];
+        System.arraycopy(split, 1, args, 0, args.length);
+        final String commandString = split[0].replace("\\", "");
+
+        ICommand command = COMMAND_REGISTRY.get(commandString);
+        if (command == null) {
+            return;
+        }
+
+        if (command.getRequiredArgs() > args.length) {
+            return;
+        }
+
+        channel.sendTyping().queue(void1 -> {
+            Message message = command.execute(executor, channel, args);
+            if (message != null) {
+                channel.sendMessage(message).queue(void2 -> command.callback(executor, channel));
+            }
+        });
     }
 }

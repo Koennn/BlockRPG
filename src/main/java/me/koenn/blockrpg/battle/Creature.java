@@ -13,9 +13,9 @@ import me.koenn.blockrpg.items.WeaponAction;
 public class Creature {
 
     private final CreatureType type;
-    private int health;
     private final int maxHealth;
     private final ItemStack weapon;
+    private int health;
 
     public Creature(CreatureType type, int maxHealth, ItemStack weapon) {
         this.type = type;

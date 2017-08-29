@@ -4,6 +4,7 @@ import me.koenn.blockrpg.battle.Battle;
 import me.koenn.blockrpg.commands.CommandManager;
 import me.koenn.blockrpg.data.FileLoader;
 import me.koenn.blockrpg.data.Stats;
+import me.koenn.blockrpg.image.ImageServer;
 import me.koenn.blockrpg.world.Vector2;
 import me.koenn.blockrpg.world.World;
 import net.dv8tion.jda.core.entities.User;
@@ -26,6 +27,7 @@ import java.util.logging.Logger;
 public final class BlockRPG {
 
     private static BlockRPG instance;
+    private static ImageServer imageServer;
     private Logger logger;
     private DiscordBot bot;
     private List<Stats> stats;
@@ -46,6 +48,9 @@ public final class BlockRPG {
         this.bot.addListener(new CommandManager());
 
         CommandManager.registerCommands();
+
+        Thread thread = new Thread(() -> imageServer = new ImageServer());
+        thread.start();
 
         File statsFile = new File("stats.json");
         if (!statsFile.exists()) {
@@ -72,6 +77,10 @@ public final class BlockRPG {
 
     public static BlockRPG getInstance() {
         return instance;
+    }
+
+    public static ImageServer getImageServer() {
+        return imageServer;
     }
 
     public static void main(String[] args) {

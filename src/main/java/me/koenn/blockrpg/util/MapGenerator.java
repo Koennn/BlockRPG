@@ -39,6 +39,25 @@ public class MapGenerator {
         this.center = BlockRPG.getInstance().getUserLocation(owner);
     }
 
+    private static int[][] readImage(String file) {
+        BufferedImage image = null;
+        try {
+            image = ImageIO.read(MapGenerator.class.getClassLoader().getResource(file));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (image == null) {
+            return new int[0][0];
+        }
+        int[][] pixels = new int[image.getWidth()][image.getHeight()];
+        for (int xPixel = 0; xPixel < image.getWidth(); xPixel++) {
+            for (int yPixel = 0; yPixel < image.getHeight(); yPixel++) {
+                pixels[xPixel][yPixel] = image.getRGB(xPixel, yPixel);
+            }
+        }
+        return pixels;
+    }
+
     public String generate(User owner) {
         /*try {
             if (cachedMaps.isCached(owner)) {
@@ -69,7 +88,7 @@ public class MapGenerator {
             realY += 50;
         }
         System.out.println("Draw time: " + (System.currentTimeMillis() - drawTime) + "ms");
-        String image = generator.generate();
+        String image = generator.generate(owner);
         cachedMaps.put(owner, image);
         System.out.println("Total time: " + (System.currentTimeMillis() - totalTime) + "ms");
         return image;
@@ -155,25 +174,5 @@ public class MapGenerator {
         } else {
             return UNEXPLORED_TILE;
         }
-    }
-
-
-    private static int[][] readImage(String file) {
-        BufferedImage image = null;
-        try {
-            image = ImageIO.read(MapGenerator.class.getClassLoader().getResource(file));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (image == null) {
-            return new int[0][0];
-        }
-        int[][] pixels = new int[image.getWidth()][image.getHeight()];
-        for (int xPixel = 0; xPixel < image.getWidth(); xPixel++) {
-            for (int yPixel = 0; yPixel < image.getHeight(); yPixel++) {
-                pixels[xPixel][yPixel] = image.getRGB(xPixel, yPixel);
-            }
-        }
-        return pixels;
     }
 }
