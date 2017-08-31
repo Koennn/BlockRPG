@@ -4,7 +4,6 @@ import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.entities.Game;
-import net.dv8tion.jda.core.entities.impl.GameImpl;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
@@ -25,7 +24,7 @@ public class DiscordBot {
         this.jda = new JDABuilder(AccountType.BOT)
                 .setToken(token)
                 .setAutoReconnect(true)
-                .setGame(new GameImpl("with you!", "", Game.GameType.DEFAULT))
+                .setGame(Game.of("with you!"))
                 .buildBlocking();
     }
 

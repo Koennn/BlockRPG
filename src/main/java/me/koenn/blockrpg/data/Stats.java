@@ -27,14 +27,15 @@ public class Stats {
         this.userId = userId;
         Inventory inventory = new Inventory();
         inventory.getItems().add(new ItemStack(ItemType.TEST_ITEM));
-        this.stats.put("0health", 100);
-        this.stats.put("1inventory", inventory);
-        this.stats.put("2weapon", null);
-        this.stats.put("3level", 1);
-        this.stats.put("4kills", 0);
-        this.stats.put("5deaths", 0);
-        this.stats.put("6skillPoints", new SkillPoints());
-        this.stats.put("7userId", userId);
+        this.stats.put("health", 100);
+        this.stats.put("inventory", inventory);
+        this.stats.put("weapon", null);
+        this.stats.put("level", 1);
+        this.stats.put("kills", 0);
+        this.stats.put("deaths", 0);
+        this.stats.put("skillPoints", new SkillPoints());
+        this.stats.put("userId", userId);
+        this.loadIds();
     }
 
     public Stats(long userId, JSONObject statsObject) {
@@ -63,6 +64,15 @@ public class Stats {
         for (int i = 0; i < unorderedStats.size(); i++) {
             this.stats.put(unorderedStats.get(i).getKey(), unorderedStats.get(i).getValue());
         }
+    }
+
+    private void loadIds() {
+        LinkedHashMap<String, Object> stats = new LinkedHashMap<>();
+        int index = 0;
+        for (String key : this.stats.keySet()) {
+            stats.put(String.valueOf(index + key), this.stats.get(key));
+        }
+        this.stats = stats;
     }
 
     public String getFormattedStats() {
