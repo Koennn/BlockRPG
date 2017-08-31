@@ -35,22 +35,22 @@ public class Stats {
         this.stats.put("deaths", 0);
         this.stats.put("skillPoints", new SkillPoints());
         this.stats.put("userId", userId);
-        this.loadIds();
     }
 
     public Stats(long userId, JSONObject statsObject) {
         this.userId = userId;
         HashMap<Integer, Map.Entry<String, Object>> unorderedStats = new HashMap<>();
         for (Object statName : statsObject.keySet()) {
+            String name = ((String) statName).substring(1);
             Map.Entry<String, Object> entry = new Map.Entry<String, Object>() {
                 @Override
                 public String getKey() {
-                    return (String) statName;
+                    return name;
                 }
 
                 @Override
                 public Object getValue() {
-                    return Formatter.readable((String) statName, statsObject.get(statName));
+                    return Formatter.readable(name, statsObject.get(statName));
                 }
 
                 @Override
@@ -66,22 +66,13 @@ public class Stats {
         }
     }
 
-    private void loadIds() {
-        LinkedHashMap<String, Object> stats = new LinkedHashMap<>();
-        int index = 0;
-        for (String key : this.stats.keySet()) {
-            stats.put(String.valueOf(index + key), this.stats.get(key));
-        }
-        this.stats = stats;
-    }
-
     public String getFormattedStats() {
         StringBuilder stringBuilder = new StringBuilder();
         for (String statName : this.stats.keySet()) {
-            if (statName.equals("7userId") || statName.equals("userId")) {
+            if (statName.equals("userId")) {
                 continue;
             }
-            stringBuilder.append("**").append(new FancyString(statName.substring(1))).append(":** ").append(Formatter.format(stats.get(statName))).append("\n");
+            stringBuilder.append(String.format("**%s:** %s\n", new FancyString(statName), Formatter.format(stats.get(statName))));
         }
         return stringBuilder.toString().trim();
     }

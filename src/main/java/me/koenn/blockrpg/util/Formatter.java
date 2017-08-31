@@ -14,24 +14,30 @@ import org.json.simple.JSONObject;
  */
 public final class Formatter {
 
+    private static final String NULL = "None";
+    private static final String INV = "Use **\\inv** to see your inventory.";
+
     public static String format(Object object) {
         if (object == null || object == "null") {
-            return "None";
+            return NULL;
         }
         if (object instanceof Inventory) {
-            return "Use **\\inv** to see your inventory.";
+            return INV;
         } else if (object instanceof ItemStack) {
             return ((ItemStack) object).getType().getName();
         } else if (object instanceof SkillPoints) {
-            return ((SkillPoints) object).getJson().toJSONString()
-                    .replace("{", "\n  ")
-                    .replace(",", "\n  ")
-                    .replace("\"", "")
-                    .replace("}", "")
-                    .replace(":", ": ");
+            return formatJSON(((SkillPoints) object).getJson());
         } else {
-            return String.valueOf(object).replace("null", "None");
+            return String.valueOf(object).replace("null", NULL);
         }
+    }
+
+    public static String formatJSON(JSONObject json) {
+        StringBuilder builder = new StringBuilder();
+        for (Object key : json.keySet()) {
+            builder.append(String.format("\n    %s: %s", new FancyString(key), json.get(key)));
+        }
+        return builder.toString();
     }
 
     public static Object savable(Object object) {

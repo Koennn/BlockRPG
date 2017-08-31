@@ -5,17 +5,18 @@ import me.koenn.blockrpg.commands.CommandManager;
 import me.koenn.blockrpg.data.FileLoader;
 import me.koenn.blockrpg.data.Stats;
 import me.koenn.blockrpg.image.ImageServer;
+import me.koenn.blockrpg.util.Console;
+import me.koenn.blockrpg.util.ThreadManager;
 import me.koenn.blockrpg.world.Vector2;
 import me.koenn.blockrpg.world.World;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
+import net.dv8tion.jda.core.utils.SimpleLog;
 
 import javax.security.auth.login.LoginException;
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * <p>
@@ -28,7 +29,8 @@ public final class BlockRPG {
 
     private static BlockRPG instance;
     private static ImageServer imageServer;
-    private Logger logger;
+    private static SimpleLog logger;
+    private static ThreadManager threadManager;
     private DiscordBot bot;
     private List<Stats> stats;
     private List<World> worlds;
@@ -36,43 +38,38 @@ public final class BlockRPG {
     private HashMap<Long, Battle> userBattles = new HashMap<>();
 
     private BlockRPG(String token) {
-        this.logger = Logger.getLogger("BlockRPG");
+        logger = SimpleLog.getLog("BlockRPG");
+        logger.info("Starting BlockRPG...");
+        threadManager = new ThreadManager();
 
+        Runtime.getRuntime().addShutdownHook(new Thread(this::exit, "shutdown-thread"));
+
+        logger.info("Loading JDA...");
         try {
             this.bot = new DiscordBot(token);
         } catch (LoginException | InterruptedException | RateLimitedException e) {
-            this.logger.severe("Error while starting bot: " + e);
+            logger.fatal("Error while starting bot: " + e);
             e.printStackTrace();
         }
 
         this.bot.addListener(new CommandManager());
 
+        logger.info("Loading commands...");
         CommandManager.registerCommands();
 
-        Thread thread = new Thread(() -> imageServer = new ImageServer());
-        thread.start();
+        logger.info("Starting threads..");
+        threadManager.createThread("image-server", () -> imageServer = new ImageServer());
+        threadManager.createThread("console", new Console(), true);
 
-        File statsFile = new File("stats.json");
-        if (!statsFile.exists()) {
-            try {
-                statsFile.createNewFile();
-            } catch (IOException e) {
-                this.logger.severe("Error while loading stats file: " + e);
-                e.printStackTrace();
-            }
-        }
-        this.stats = FileLoader.loadStats(statsFile);
+        logger.info("Loading files...");
+        this.stats = FileLoader.loadStats(new File("stats.json"));
+        this.worlds = FileLoader.loadWorlds(new File("worlds.json"));
 
-        File worldsFile = new File("worlds.json");
-        if (!worldsFile.exists()) {
-            try {
-                worldsFile.createNewFile();
-            } catch (IOException e) {
-                this.logger.severe("Error while loading stats file: " + e);
-                e.printStackTrace();
-            }
-        }
-        this.worlds = FileLoader.loadWorlds(worldsFile);
+        logger.info("Successfully loaded BlockRPG!");
+    }
+
+    public static SimpleLog getLogger() {
+        return logger;
     }
 
     public static BlockRPG getInstance() {
@@ -81,6 +78,26 @@ public final class BlockRPG {
 
     public static ImageServer getImageServer() {
         return imageServer;
+    }
+
+    private void exit() {
+        logger.info("Shutting down BlockRPG...");
+        if (ImageServer.server != null) {
+            ImageServer.server.stop(0);
+        }
+
+        if (bot != null && bot.getJda() != null) {
+            bot.getJda().shutdown();
+        }
+
+        logger.info("Waiting for bot to disconnect");
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            logger.fatal("Shutdown thread got interrupted: " + e);
+        }
+
+        threadManager.disable();
     }
 
     public static void main(String[] args) {
@@ -136,14 +153,6 @@ public final class BlockRPG {
 
     public void setUserLocation(User user, Vector2 location) {
         this.userLocations.put(user.getIdLong(), location);
-    }
-
-    public Logger getLogger() {
-        return logger;
-    }
-
-    public DiscordBot getBot() {
-        return bot;
     }
 
     public HashMap<Long, Battle> getUserBattles() {
