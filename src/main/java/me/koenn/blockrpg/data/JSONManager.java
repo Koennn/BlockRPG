@@ -15,6 +15,8 @@ import java.io.IOException;
 
 public class JSONManager {
 
+    private static final String DATA_DIR = "data";
+
     private final JSONObject defaultBody;
     private File jsonFile;
     private JSONObject body;
@@ -24,11 +26,16 @@ public class JSONManager {
     }
 
     public JSONManager(String fileName, JSONObject defaultBody) {
-        if (!fileName.endsWith(".json") && !fileName.endsWith(".dpl")) {
+        if (!fileName.endsWith(".json")) {
             fileName += ".json";
         }
+        File dataFolder = new File(DATA_DIR);
+        if (!dataFolder.exists()) {
+            dataFolder.mkdir();
+        }
+
         this.defaultBody = defaultBody;
-        this.jsonFile = new File(fileName);
+        this.jsonFile = new File(dataFolder, fileName);
 
         this.reload();
     }
