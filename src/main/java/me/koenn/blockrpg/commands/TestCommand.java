@@ -1,5 +1,8 @@
 package me.koenn.blockrpg.commands;
 
+import me.koenn.blockrpg.BlockRPG;
+import me.koenn.blockrpg.battle.Battle;
+import me.koenn.blockrpg.image.BattleGenerator;
 import me.koenn.blockrpg.image.ImageGenerator;
 import me.koenn.blockrpg.image.Texture;
 import me.koenn.blockrpg.util.SkinRenderer;
@@ -39,11 +42,9 @@ public class TestCommand implements ICommand {
 
     @Override
     public Message execute(User executor, MessageChannel channel, String[] args) {
-        ImageGenerator generator = new ImageGenerator(889, 500, true);
-        generator.draw(0, 0, new Texture("bg", "bg.png"));
-        generator.draw(100, 100, new Texture("skin", SkinRenderer.getSkinRender(SkinRenderer.getSkinURL("Steve"))));
-        generator.draw(500, 200, new Texture("creature", "thinkofdeath.png"));
-        return new MessageBuilder().append(generator.generate(executor)).build();
+        Battle battle = BlockRPG.getInstance().getUserBattles().get(executor.getIdLong());
+        BattleGenerator generator = new BattleGenerator(battle);
+        return new MessageBuilder().append(generator.generate()).build();
     }
 
     @Override

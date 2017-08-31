@@ -35,9 +35,10 @@ public class ActionSwingSword implements WeaponAction {
 
     @Override
     public Message executeCreature(CreatureType creature, User user, Battle battle) {
+        battle.setUserHealth(battle.getUserHealth() - 5);
         return new MessageBuilder().setEmbed(new RPGMessageEmbed(
                 String.format("%s used %s", creature.getName(), this.getActionName()),
-                String.format("**%s dealt %s damage!**\n**Your's health:** %s", creature.getName(), 5, null),
+                String.format("**%s dealt %s damage!**\n**Your's health:** %s", creature.getName(), 5, battle.getUserHealth()),
                 user)
         ).build();
     }

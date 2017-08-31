@@ -2,7 +2,7 @@ package me.koenn.blockrpg.commands;
 
 import me.koenn.blockrpg.BlockRPG;
 import me.koenn.blockrpg.util.Direction;
-import me.koenn.blockrpg.util.MapGenerator;
+import me.koenn.blockrpg.image.MapGenerator;
 import me.koenn.blockrpg.util.RPGMessageEmbed;
 import me.koenn.blockrpg.world.Tile;
 import me.koenn.blockrpg.world.Vector2;
@@ -54,7 +54,7 @@ public class ExploreCommand implements ICommand {
         }
         World world = blockRPG.getWorld(executor);
         if (world == null) {
-            throw new NullPointerException("Unable to find users stats");
+            throw new NullPointerException("Unable to find users world");
         }
 
         if (BlockRPG.getInstance().getUserBattles().get(executor.getIdLong()) != null) {
@@ -66,7 +66,7 @@ public class ExploreCommand implements ICommand {
             return new MessageBuilder().append("You already explored this tile! Use **\\travel** to get there.").build();
         }
 
-        Message battleMessage = world.getBattle(executor, channel, world.getTile(moved));
+        Message battleMessage = world.getBattle(executor, channel, world.explore(moved));
         if (battleMessage != null) {
             return battleMessage;
         }

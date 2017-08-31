@@ -2,7 +2,7 @@ package me.koenn.blockrpg.commands;
 
 import me.koenn.blockrpg.BlockRPG;
 import me.koenn.blockrpg.util.Direction;
-import me.koenn.blockrpg.util.MapGenerator;
+import me.koenn.blockrpg.image.MapGenerator;
 import me.koenn.blockrpg.world.Tile;
 import me.koenn.blockrpg.world.Vector2;
 import me.koenn.blockrpg.world.World;

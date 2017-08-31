@@ -33,12 +33,12 @@ public final class FileLoader {
     }
 
     public static void saveStats(File file, List<Stats> statsList) {
-        /*final JSONManager jsonManager = new JSONManager(file.getName());
+        final JSONManager jsonManager = new JSONManager(file.getName());
         final JSONArray statsArray = new JSONArray();
         for (final Stats stats : statsList) {
             statsArray.add(stats.toJSON());
         }
-        jsonManager.setInBody("stats", statsArray);*/
+        jsonManager.setInBody("stats", statsArray);
     }
 
     public static List<World> loadWorlds(File file) {
@@ -55,11 +55,11 @@ public final class FileLoader {
     }
 
     public static void saveWorlds(File file, List<World> worldList) {
-        /*final JSONManager jsonManager = new JSONManager(file.getName());
+        final JSONManager jsonManager = new JSONManager(file.getName());
         final JSONArray worldsArray = new JSONArray();
         for (final World world : worldList) {
             worldsArray.add(world.toJson());
         }
-        jsonManager.setInBody("worlds", worldsArray);*/
+        jsonManager.setInBody("worlds", worldsArray);
     }
 }

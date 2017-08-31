@@ -78,7 +78,7 @@ public class Stats {
     public String getFormattedStats() {
         StringBuilder stringBuilder = new StringBuilder();
         for (String statName : this.stats.keySet()) {
-            if (statName.equals("7userId")) {
+            if (statName.equals("7userId") || statName.equals("userId")) {
                 continue;
             }
             stringBuilder.append("**").append(new FancyString(statName.substring(1))).append(":** ").append(Formatter.format(stats.get(statName))).append("\n");
@@ -96,6 +96,7 @@ public class Stats {
         return jsonObject;
     }
 
+    //TODO: Auto first char removal.
     public Object get(String name) {
         return this.stats.get(name);
     }

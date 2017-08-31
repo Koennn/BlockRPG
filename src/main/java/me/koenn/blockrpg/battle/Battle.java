@@ -4,7 +4,9 @@ import me.koenn.blockrpg.BlockRPG;
 import me.koenn.blockrpg.items.Inventory;
 import me.koenn.blockrpg.items.ItemStack;
 import me.koenn.blockrpg.items.WeaponAction;
+import me.koenn.blockrpg.util.RPGMessageEmbed;
 import me.koenn.blockrpg.world.Tile;
+import me.koenn.blockrpg.world.World;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
@@ -18,10 +20,8 @@ import java.util.LinkedHashMap;
 
 /**
  * <p>
- * Copyright (C) Koenn - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by Koen Willemse, June 2017
+ * Copyright (C) Koenn - All Rights Reserved Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential Written by Koen Willemse, June 2017
  */
 public class Battle {
 
@@ -31,12 +31,14 @@ public class Battle {
     private final Tile location;
     private final LinkedHashMap<Integer, WeaponAction> userMoves = new LinkedHashMap<>();
     private boolean turn;
+    private int userHealth;
 
     public Battle(User user, MessageChannel channel, Creature opponent, Tile location) {
         this.user = user;
         this.channel = channel;
         this.opponent = opponent;
         this.location = location;
+        this.userHealth = (int) BlockRPG.getInstance().getStats(user).get("health");
     }
 
     public Message start() {
@@ -76,8 +78,27 @@ public class Battle {
 
     public void endTurn(MessageChannel channel) {
         this.turn = false;
-        channel.sendTyping().queue();
-        channel.sendMessage(this.opponent.getType().doMove(this)).queue();
+
+        if (userHealth <= 0) {
+            channel.sendMessage("Error while processing!").queue();
+            return;
+        }
+
+        channel.sendTyping().queue(a -> channel.sendMessage(this.opponent.getType().doMove(this)).queue(b -> {
+            if (this.opponent.getHealth() <= 0) {
+                World world = BlockRPG.getInstance().getWorld(user);
+                if (world == null) {
+                    throw new NullPointerException("Unable to find users world");
+                }
+
+                BlockRPG.getInstance().setUserLocation(this.user, this.location.getLocation());
+                channel.sendMessage(new MessageBuilder().setEmbed(new RPGMessageEmbed(
+                        String.format("You killed %s", this.opponent.getType().getName()),
+                        String.format("**Your health:** %s", this.userHealth),
+                        this.user)
+                ).build()).queue();
+            }
+        }));
     }
 
     public User getUser() {
@@ -102,5 +123,13 @@ public class Battle {
 
     public boolean isTurn() {
         return turn;
+    }
+
+    public int getUserHealth() {
+        return userHealth;
+    }
+
+    public void setUserHealth(int userHealth) {
+        this.userHealth = userHealth;
     }
 }

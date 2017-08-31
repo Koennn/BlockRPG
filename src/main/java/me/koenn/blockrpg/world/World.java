@@ -69,9 +69,9 @@ public class World {
     }
 
     public Message getBattle(User user, MessageChannel channel, Tile tile) {
-        if (ThreadLocalRandom.current().nextInt(10) != 1) {
+        /*if (ThreadLocalRandom.current().nextInt(10) != 1) {
             return null;
-        }
+        }*/
         Battle battle = new Battle(user, channel, new Creature(CreatureType.SCARY_MONSTER, 50, new ItemStack(ItemType.BASIC_SWORD)), tile);
         BlockRPG.getInstance().getUserBattles().put(user.getIdLong(), battle);
         return battle.start();
