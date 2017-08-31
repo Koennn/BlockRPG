@@ -1,7 +1,7 @@
 package me.koenn.blockrpg.commands;
 
 import me.koenn.blockrpg.BlockRPG;
-import me.koenn.blockrpg.util.MapGenerator;
+import me.koenn.blockrpg.image.MapGenerator;
 import me.koenn.blockrpg.util.RPGMessageEmbed;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;

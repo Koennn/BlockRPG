@@ -1,7 +1,5 @@
 package me.koenn.blockrpg.image;
 
-import me.koenn.blockrpg.util.MapGenerator;
-
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 
