@@ -39,4 +39,8 @@ public enum CreatureType {
     public Texture getTexture() {
         return texture;
     }
+
+    public int getHealth() {
+        return health;
+    }
 }

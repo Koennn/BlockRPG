@@ -1,4 +1,4 @@
-package me.koenn.blockrpg.items.basic_sword;
+package me.koenn.blockrpg.items.sword;
 
 import me.koenn.blockrpg.battle.Battle;
 import me.koenn.blockrpg.battle.CreatureType;

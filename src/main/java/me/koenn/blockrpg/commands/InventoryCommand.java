@@ -60,7 +60,7 @@ public class InventoryCommand implements ICommand {
                 .setColor(Color.GREEN)
                 .setTitle("Inventory:")
                 .setAuthor(new MessageEmbed.AuthorInfo(executor.getName(), "", executor.getEffectiveAvatarUrl(), ""))
-                .setDescription(((Inventory) stats.get("1inventory")).getFormattedString())
+                .setDescription(((Inventory) stats.get("inventory")).getFormattedString())
                 .setFooter(new MessageEmbed.Footer("BlockRPG - BETA", "", ""))
                 .setFields(new ArrayList<>())
         ).build();

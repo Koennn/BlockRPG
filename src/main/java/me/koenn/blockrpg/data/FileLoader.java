@@ -36,7 +36,7 @@ public final class FileLoader {
         final JSONManager jsonManager = new JSONManager(file.getName());
         final JSONArray statsArray = new JSONArray();
         for (final Stats stats : statsList) {
-            statsArray.add(stats.toJSON());
+            //statsArray.add(stats.toJSON());
         }
         jsonManager.setInBody("stats", statsArray);
     }
@@ -58,7 +58,7 @@ public final class FileLoader {
         final JSONManager jsonManager = new JSONManager(file.getName());
         final JSONArray worldsArray = new JSONArray();
         for (final World world : worldList) {
-            worldsArray.add(world.toJson());
+            //worldsArray.add(world.toJson());
         }
         jsonManager.setInBody("worlds", worldsArray);
     }

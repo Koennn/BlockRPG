@@ -1,6 +1,8 @@
 package me.koenn.blockrpg.commands;
 
 import me.koenn.blockrpg.util.registry.Registry;
+import net.dv8tion.jda.core.MessageBuilder;
+import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
@@ -17,6 +19,7 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 public class CommandManager extends ListenerAdapter {
 
     public static final Registry<ICommand> COMMAND_REGISTRY = new Registry<>(ICommand::getCommand);
+    public static final String ALLOWED_CHANNEL = "development";
 
     public static void registerAlias(ICommand command, String alias) {
         COMMAND_REGISTRY.register(new ICommand() {
@@ -61,6 +64,7 @@ public class CommandManager extends ListenerAdapter {
         registerAlias(COMMAND_REGISTRY.register(new MoveCommand()), "mv");
         COMMAND_REGISTRY.register(new MapCommand());
         COMMAND_REGISTRY.register(new TestCommand());
+        COMMAND_REGISTRY.register(new UseCommand());
     }
 
     @Override
@@ -68,15 +72,19 @@ public class CommandManager extends ListenerAdapter {
         this.interpret(event.getMessage().getContent(), event.getAuthor(), event.getChannel());
     }
 
-    private void interpret(final String content, final User executor, final MessageChannel channel) {
+    private void interpret(String content, User executor, MessageChannel channel) {
         if (!content.startsWith("\\")) {
             return;
         }
 
-        final String[] split = content.split(" ");
-        final String[] args = new String[split.length - 1];
+        if (!channel.getName().equals(ALLOWED_CHANNEL) && !channel.getType().equals(ChannelType.PRIVATE)) {
+            return;
+        }
+
+        String[] split = content.split(" ");
+        String[] args = new String[split.length - 1];
         System.arraycopy(split, 1, args, 0, args.length);
-        final String commandString = split[0].replace("\\", "");
+        String commandString = split[0].replace("\\", "");
 
         ICommand command = COMMAND_REGISTRY.get(commandString);
         if (command == null) {
@@ -88,9 +96,23 @@ public class CommandManager extends ListenerAdapter {
         }
 
         channel.sendTyping().queue(void1 -> {
-            Message message = command.execute(executor, channel, args);
+            Message message;
+            boolean error = false;
+            try {
+                message = command.execute(executor, channel, args);
+            } catch (Exception ex) {
+                message = new MessageBuilder().append(String.format("Error while executing command \'%s\': %s", command.getCommand(), ex)).build();
+                ex.printStackTrace();
+                error = true;
+            }
+            boolean callback = !error;
+
             if (message != null) {
-                channel.sendMessage(message).queue(void2 -> command.callback(executor, channel));
+                channel.sendMessage(message).queue(void2 -> {
+                    if (callback) {
+                        command.callback(executor, channel);
+                    }
+                });
             }
         });
     }

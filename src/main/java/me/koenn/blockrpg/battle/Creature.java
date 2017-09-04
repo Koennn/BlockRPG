@@ -17,10 +17,10 @@ public class Creature {
     private final ItemStack weapon;
     private int health;
 
-    public Creature(CreatureType type, int maxHealth, ItemStack weapon) {
+    public Creature(CreatureType type, ItemStack weapon) {
         this.type = type;
-        this.health = maxHealth;
-        this.maxHealth = maxHealth;
+        this.health = type.getHealth();
+        this.maxHealth = type.getHealth();
         this.weapon = weapon;
     }
 

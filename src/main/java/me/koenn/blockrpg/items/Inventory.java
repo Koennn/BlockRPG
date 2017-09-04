@@ -20,6 +20,7 @@ public class Inventory {
     public Inventory() {
         this(new ArrayList<>());
         this.items.add(new ItemStack(ItemType.BASIC_SWORD));
+        this.items.add(new ItemStack(ItemType.COOKIE, 12));
     }
 
     public Inventory(JSONObject inventory) {
@@ -32,6 +33,19 @@ public class Inventory {
 
     public Inventory(List<ItemStack> items) {
         this.items = items;
+    }
+
+    public boolean hasItem(ItemType type) {
+        return this.getItemStack(type) != null;
+    }
+
+    public ItemStack getItemStack(ItemType type) {
+        for (ItemStack stack : this.items) {
+            if (stack.getType().equals(type)) {
+                return stack;
+            }
+        }
+        return null;
     }
 
     public List<ItemStack> getItems() {
@@ -51,7 +65,7 @@ public class Inventory {
     public String getFormattedString() {
         StringBuilder stringBuilder = new StringBuilder();
         for (ItemStack itemStack : this.items) {
-            stringBuilder.append(itemStack.getAmount()).append("x ").append(itemStack.getType().getName()).append("\n");
+            stringBuilder.append(String.format("%sx %s\n", itemStack.getAmount(), itemStack.toString()));
         }
         return stringBuilder.toString().trim();
     }

@@ -49,4 +49,9 @@ public class ItemStack {
         jsonObject.put("amount", this.amount);
         return jsonObject;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s %s", this.type.getEmote(), this.type.getName());
+    }
 }

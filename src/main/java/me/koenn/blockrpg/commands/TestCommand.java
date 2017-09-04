@@ -1,11 +1,6 @@
 package me.koenn.blockrpg.commands;
 
-import me.koenn.blockrpg.BlockRPG;
-import me.koenn.blockrpg.battle.Battle;
-import me.koenn.blockrpg.image.BattleGenerator;
-import me.koenn.blockrpg.image.ImageGenerator;
-import me.koenn.blockrpg.image.Texture;
-import me.koenn.blockrpg.util.SkinRenderer;
+import me.koenn.blockrpg.util.RPGMessageEmbed;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
@@ -42,9 +37,7 @@ public class TestCommand implements ICommand {
 
     @Override
     public Message execute(User executor, MessageChannel channel, String[] args) {
-        Battle battle = BlockRPG.getInstance().getUserBattles().get(executor.getIdLong());
-        BattleGenerator generator = new BattleGenerator(battle);
-        return new MessageBuilder().append(generator.generate()).build();
+        return new MessageBuilder().setEmbed(new RPGMessageEmbed("Test callback", ":smile:", executor)).build();
     }
 
     @Override

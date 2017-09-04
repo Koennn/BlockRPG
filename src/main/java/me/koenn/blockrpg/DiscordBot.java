@@ -3,6 +3,7 @@ package me.koenn.blockrpg;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
+import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
@@ -24,7 +25,8 @@ public class DiscordBot {
         this.jda = new JDABuilder(AccountType.BOT)
                 .setToken(token)
                 .setAutoReconnect(true)
-                .setGame(Game.of("with you!"))
+                .setGame(Game.of("in development!"))
+                .setStatus(OnlineStatus.DO_NOT_DISTURB)
                 .buildBlocking();
     }
 

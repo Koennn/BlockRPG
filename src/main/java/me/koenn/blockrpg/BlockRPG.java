@@ -158,4 +158,8 @@ public final class BlockRPG {
     public HashMap<Long, Battle> getUserBattles() {
         return userBattles;
     }
+
+    public DiscordBot getBot() {
+        return bot;
+    }
 }

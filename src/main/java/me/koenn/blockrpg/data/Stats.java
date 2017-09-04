@@ -1,8 +1,6 @@
 package me.koenn.blockrpg.data;
 
 import me.koenn.blockrpg.items.Inventory;
-import me.koenn.blockrpg.items.ItemStack;
-import me.koenn.blockrpg.items.ItemType;
 import me.koenn.blockrpg.util.FancyString;
 import me.koenn.blockrpg.util.Formatter;
 import org.json.simple.JSONObject;
@@ -25,10 +23,8 @@ public class Stats {
 
     public Stats(long userId) {
         this.userId = userId;
-        Inventory inventory = new Inventory();
-        inventory.getItems().add(new ItemStack(ItemType.TEST_ITEM));
         this.stats.put("health", 100);
-        this.stats.put("inventory", inventory);
+        this.stats.put("inventory", new Inventory());
         this.stats.put("weapon", null);
         this.stats.put("level", 1);
         this.stats.put("kills", 0);
@@ -87,9 +83,12 @@ public class Stats {
         return jsonObject;
     }
 
-    //TODO: Auto first char removal.
     public Object get(String name) {
         return this.stats.get(name);
+    }
+
+    public void set(String name, Object obj) {
+        this.stats.put(name, obj);
     }
 
     public long getUserId() {

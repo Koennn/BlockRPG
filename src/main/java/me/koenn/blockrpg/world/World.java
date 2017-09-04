@@ -13,7 +13,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.util.HashMap;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * <p>
@@ -72,7 +71,7 @@ public class World {
         /*if (ThreadLocalRandom.current().nextInt(10) != 1) {
             return null;
         }*/
-        Battle battle = new Battle(user, channel, new Creature(CreatureType.SCARY_MONSTER, 50, new ItemStack(ItemType.BASIC_SWORD)), tile);
+        Battle battle = new Battle(user, channel, new Creature(CreatureType.SCARY_MONSTER, new ItemStack(ItemType.BASIC_SWORD)), tile);
         BlockRPG.getInstance().getUserBattles().put(user.getIdLong(), battle);
         return battle.start();
     }
