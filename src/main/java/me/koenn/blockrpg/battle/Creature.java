@@ -1,7 +1,7 @@
 package me.koenn.blockrpg.battle;
 
+import me.koenn.blockrpg.items.IWeaponAction;
 import me.koenn.blockrpg.items.ItemStack;
-import me.koenn.blockrpg.items.WeaponAction;
 
 /**
  * <p>
@@ -44,7 +44,7 @@ public class Creature {
         return weapon;
     }
 
-    public WeaponAction getAction() {
+    public IWeaponAction getAction() {
         return this.weapon.getType().getActions()[0];
     }
 }

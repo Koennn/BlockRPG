@@ -13,7 +13,7 @@ import net.dv8tion.jda.core.entities.User;
  * Proprietary and confidential
  * Written by Koen Willemse, June 2017
  */
-public interface WeaponAction {
+public interface IWeaponAction {
 
     String getActionName();
 

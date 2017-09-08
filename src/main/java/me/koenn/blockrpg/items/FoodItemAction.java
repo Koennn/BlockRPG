@@ -7,7 +7,7 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
 
-public class FoodItemAction implements ItemAction {
+public class FoodItemAction implements IItemAction {
 
     private final String type;
     private final int restoreAmount;

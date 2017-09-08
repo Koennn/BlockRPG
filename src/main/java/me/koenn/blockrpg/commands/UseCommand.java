@@ -5,21 +5,13 @@ import me.koenn.blockrpg.items.Inventory;
 import me.koenn.blockrpg.items.ItemStack;
 import me.koenn.blockrpg.items.ItemType;
 import me.koenn.blockrpg.util.RPGMessageEmbed;
+import me.koenn.blockrpg.util.StringHelper;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
 
 public class UseCommand implements ICommand {
-
-    private static String concat(String[] words) {
-        StringBuilder builder = new StringBuilder();
-        for (String word : words) {
-            builder.append(word).append("_");
-        }
-        String string = builder.toString();
-        return string.substring(0, string.length() - 1);
-    }
 
     @Override
     public String getCommand() {
@@ -47,7 +39,7 @@ public class UseCommand implements ICommand {
             return new MessageBuilder().append("Use **\\stats** first to start playing!").build();
         }
 
-        String typeString = concat(args);
+        String typeString = StringHelper.concat(args);
         ItemType type;
         try {
             type = ItemType.valueOf(typeString.toUpperCase());
@@ -70,7 +62,7 @@ public class UseCommand implements ICommand {
             inventory.getItems().remove(stack);
         }
 
-        return type.getItemAction().execute(executor, channel);
+        return type.getIItemAction().execute(executor, channel);
     }
 
     @Override

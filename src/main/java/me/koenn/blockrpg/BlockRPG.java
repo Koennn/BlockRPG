@@ -80,6 +80,15 @@ public final class BlockRPG {
         return imageServer;
     }
 
+    public static void main(String[] args) {
+        if (args.length == 0) {
+            System.err.println("No token provided!");
+            return;
+        }
+
+        instance = new BlockRPG(args[0]);
+    }
+
     private void exit() {
         logger.info("Shutting down BlockRPG...");
         if (ImageServer.server != null) {
@@ -98,15 +107,6 @@ public final class BlockRPG {
         }
 
         threadManager.disable();
-    }
-
-    public static void main(String[] args) {
-        if (args.length == 0) {
-            System.err.println("No token provided!");
-            return;
-        }
-
-        instance = new BlockRPG(args[0]);
     }
 
     public boolean hasStats(User user) {

@@ -1,9 +1,9 @@
 package me.koenn.blockrpg.battle;
 
 import me.koenn.blockrpg.BlockRPG;
+import me.koenn.blockrpg.items.IWeaponAction;
 import me.koenn.blockrpg.items.Inventory;
 import me.koenn.blockrpg.items.ItemStack;
-import me.koenn.blockrpg.items.WeaponAction;
 import me.koenn.blockrpg.util.RPGMessageEmbed;
 import me.koenn.blockrpg.world.Tile;
 import me.koenn.blockrpg.world.World;
@@ -29,7 +29,7 @@ public class Battle {
     private final MessageChannel channel;
     private final Creature opponent;
     private final Tile location;
-    private final LinkedHashMap<Integer, WeaponAction> userMoves = new LinkedHashMap<>();
+    private final LinkedHashMap<Integer, IWeaponAction> userMoves = new LinkedHashMap<>();
     private boolean turn;
     private int userHealth;
 
@@ -46,7 +46,7 @@ public class Battle {
         int index = 1;
         for (ItemStack item : ((Inventory) BlockRPG.getInstance().getStats(user).get("inventory")).getItems()) {
             if (item.getType().getActions() != null) {
-                for (WeaponAction action : item.getType().getActions()) {
+                for (IWeaponAction action : item.getType().getActions()) {
                     userMoves.put(index, action);
                     yourMoves.append("`  \\move ").append(index).append("`: ").append(action.getActionName()).append("\n");
                     index++;
@@ -67,7 +67,7 @@ public class Battle {
         ).build();
     }
 
-    public Message executeMove(WeaponAction move, MessageChannel channel) {
+    public Message executeMove(IWeaponAction move, MessageChannel channel) {
         Message message = move.execute(this.user, channel, this);
         if (message != null) {
             return message;
@@ -126,7 +126,7 @@ public class Battle {
         return location;
     }
 
-    public LinkedHashMap<Integer, WeaponAction> getUserMoves() {
+    public LinkedHashMap<Integer, IWeaponAction> getUserMoves() {
         return userMoves;
     }
 

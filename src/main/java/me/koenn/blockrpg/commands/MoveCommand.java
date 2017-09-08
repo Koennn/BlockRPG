@@ -2,7 +2,7 @@ package me.koenn.blockrpg.commands;
 
 import me.koenn.blockrpg.BlockRPG;
 import me.koenn.blockrpg.battle.Battle;
-import me.koenn.blockrpg.items.WeaponAction;
+import me.koenn.blockrpg.items.IWeaponAction;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
@@ -39,6 +39,11 @@ public class MoveCommand implements ICommand {
 
     @Override
     public Message execute(User executor, MessageChannel channel, String[] args) {
+        Battle battle = BlockRPG.getInstance().getUserBattles().get(executor.getIdLong());
+        if (battle == null) {
+            return new MessageBuilder().append("You are not in a battle right now.").build();
+        }
+
         int moveId;
         try {
             moveId = Integer.parseInt(args[0]);
@@ -46,12 +51,7 @@ public class MoveCommand implements ICommand {
             return new MessageBuilder().append("Use **\\move <move-id>** to use a move.").build();
         }
 
-        Battle battle = BlockRPG.getInstance().getUserBattles().get(executor.getIdLong());
-        if (battle == null) {
-            return new MessageBuilder().append("You are not in a battle right now.").build();
-        }
-
-        WeaponAction move = battle.getUserMoves().get(moveId);
+        IWeaponAction move = battle.getUserMoves().get(moveId);
         return battle.executeMove(move, channel);
     }
 

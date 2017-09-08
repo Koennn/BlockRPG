@@ -1,7 +1,6 @@
 package me.koenn.blockrpg.image;
 
 import me.koenn.blockrpg.battle.Battle;
-import me.koenn.blockrpg.util.SkinRenderer;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -23,14 +22,6 @@ public class BattleGenerator {
         this.battle = battle;
     }
 
-    public String generate() {
-        ImageGenerator generator = new ImageGenerator(800, 400);
-        Texture userAvatar = new Texture("userAvatar", readImage(this.battle.getUser().getEffectiveAvatarUrl()));
-        generator.draw(10, 10, userAvatar);
-        generator.draw(590, 10, battle.getOpponent().getType().getTexture());
-        return generator.generate(battle.getUser());
-    }
-
     public static BufferedImage readImage(String link) {
         try {
             final HttpURLConnection connection = (HttpURLConnection) new URL(link).openConnection();
@@ -49,5 +40,13 @@ public class BattleGenerator {
         g2d.drawImage(tmp, 0, 0, null);
         g2d.dispose();
         return dimg;
+    }
+
+    public String generate() {
+        ImageGenerator generator = new ImageGenerator(800, 400);
+        Texture userAvatar = new Texture("userAvatar", readImage(this.battle.getUser().getEffectiveAvatarUrl()));
+        generator.draw(10, 10, userAvatar);
+        generator.draw(590, 10, battle.getOpponent().getType().getTexture());
+        return generator.generate(battle.getUser());
     }
 }

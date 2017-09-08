@@ -10,33 +10,47 @@ import me.koenn.blockrpg.items.sword.ActionSwingSword;
  */
 public enum ItemType {
 
-    TEST_ITEM("Test Item", ":x:"),
-    COOKIE("Cookie", ":cookie:", new FoodItemAction("Cookie", 10)),
-    BASIC_SWORD("Basic Sword", ":crossed_swords:", new WeaponAction[]{
-            new ActionSwingSword(),
-            new ActionBlockAttack()
-    });
+    TEST_ITEM(
+            "Test Item", ":x:",
+            "Item used for testing."
+    ),
+
+    COOKIE(
+            "Cookie", ":cookie:",
+            "A nice and delicious cookie.\nRestores 10 hp.",
+            new FoodItemAction("Cookie", 10)
+    ),
+
+    BASIC_SWORD(
+            "Basic Sword", ":crossed_swords:",
+            "A basic sword.\nAbilities:\n  `Swing Sword`\n  `Block Attack`",
+            new IWeaponAction[]{new ActionSwingSword(), new ActionBlockAttack()}
+    );
 
     private final String name;
     private final String emote;
-    private WeaponAction[] actions;
-    private ItemAction itemAction;
+    private final String description;
+    private IWeaponAction[] actions;
+    private IItemAction IItemAction;
 
-    ItemType(String name, String emote) {
+    ItemType(String name, String emote, String description) {
         this.name = name;
         this.emote = emote;
+        this.description = description;
     }
 
-    ItemType(String name, String emote, WeaponAction[] actions) {
+    ItemType(String name, String emote, String description, IWeaponAction[] actions) {
         this.name = name;
         this.emote = emote;
+        this.description = description;
         this.actions = actions;
     }
 
-    ItemType(String name, String emote, ItemAction itemAction) {
+    ItemType(String name, String emote, String description, IItemAction IItemAction) {
         this.name = name;
         this.emote = emote;
-        this.itemAction = itemAction;
+        this.description = description;
+        this.IItemAction = IItemAction;
     }
 
     public String getName() {
@@ -47,15 +61,19 @@ public enum ItemType {
         return emote;
     }
 
-    public WeaponAction[] getActions() {
+    public IWeaponAction[] getActions() {
         return actions;
     }
 
-    public ItemAction getItemAction() {
-        return itemAction;
+    public IItemAction getIItemAction() {
+        return IItemAction;
     }
 
     public boolean hasItemAction() {
-        return this.itemAction != null;
+        return this.IItemAction != null;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

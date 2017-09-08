@@ -42,7 +42,12 @@ public class HelpCommand implements ICommand {
             if (command.isAlias()) {
                 continue;
             }
-            stringBuilder.append("**`\\").append(command.getCommand()).append("`:**\n").append(command.getDescription()).append("\n");
+            stringBuilder.append(String.format(
+                    "**`%s%s`**\n%s\n\n",
+                    CommandManager.CMD_CHAR,
+                    command.getCommand(),
+                    command.getDescription()
+            ));
         }
         String help = stringBuilder.toString().trim();
         return new MessageBuilder().setEmbed(new RPGMessageEmbed(
