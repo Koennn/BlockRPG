@@ -43,10 +43,11 @@ public class CommandManager extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        this.interpret(event.getMessage().getContent(), event.getAuthor(), event.getChannel());
+        this.interpret(event.getMessage(), event.getAuthor(), event.getChannel());
     }
 
-    private void interpret(String content, User executor, MessageChannel channel) {
+    private void interpret(Message message, User executor, MessageChannel channel) {
+        String content = message.getContent();
         if (!content.startsWith(CMD_CHAR)) {
             return;
         }
@@ -62,6 +63,7 @@ public class CommandManager extends ListenerAdapter {
 
         ICommand command = COMMAND_REGISTRY.get(commandString);
         if (command == null) {
+            message.addReaction(message.getGuild().getEmotesByName("cross", false).get(0)).queue();
             channel.sendTyping().queue(void1 -> channel.sendMessage(new MessageBuilder().setEmbed(new RPGMessageEmbed(
                     String.format("Unknown command %s", commandString),
                     String.format("Use %shelp for a list of commands", CMD_CHAR),
@@ -71,6 +73,7 @@ public class CommandManager extends ListenerAdapter {
         }
 
         if (command.getRequiredArgs() > args.length) {
+            message.addReaction(message.getGuild().getEmotesByName("cross", false).get(0)).queue();
             channel.sendTyping().queue(void1 -> channel.sendMessage(new MessageBuilder().setEmbed(new RPGMessageEmbed(
                     String.format("Command %s requires additional arguments.", command.getCommand()),
                     command.getDescription(), executor
@@ -79,22 +82,23 @@ public class CommandManager extends ListenerAdapter {
         }
 
         BlockRPG.getLogger().info(String.format("%s executed command %s", executor.getName(), command.getCommand()));
+        message.addReaction(message.getGuild().getEmotesByName("check", false).get(0)).queue();
 
         channel.sendTyping().queue(void1 -> {
-            Message message;
+            Message response;
             boolean error = false;
             try {
-                message = command.execute(executor, channel, args);
+                response = command.execute(executor, channel, args);
             } catch (Exception ex) {
-                message = new MessageBuilder().append(String.format("Error while executing command \'%s\': %s", command.getCommand(), ex)).build();
+                response = new MessageBuilder().append(String.format("Error while executing command \'%s\': %s", command.getCommand(), ex)).build();
                 BlockRPG.getLogger().fatal(String.format("Error while executing command \'%s\': %s", command.getCommand(), ex));
                 ex.printStackTrace();
                 error = true;
             }
             boolean callback = !error;
 
-            if (message != null) {
-                channel.sendMessage(message).queue(void2 -> {
+            if (response != null) {
+                channel.sendMessage(response).queue(void2 -> {
                     if (callback) {
                         command.callback(executor, channel);
                     }
