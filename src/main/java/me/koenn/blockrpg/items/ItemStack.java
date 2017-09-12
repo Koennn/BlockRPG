@@ -39,6 +39,10 @@ public class ItemStack {
         return amount;
     }
 
+    public void add(int amount) {
+        this.amount += amount;
+    }
+
     public void setAmount(int amount) {
         this.amount = amount;
     }

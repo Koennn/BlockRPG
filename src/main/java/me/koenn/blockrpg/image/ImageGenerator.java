@@ -52,17 +52,11 @@ public class ImageGenerator {
     }
 
     private String upload(BufferedImage image, User user) throws IOException, ParseException {
-        long encodeTime = System.currentTimeMillis();
-
         ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
         ImageIO.write(image, "png", byteArray);
         byte[] byteImage = byteArray.toByteArray();
         String dataImage = Base64.encode(byteImage);
         String data = URLEncoder.encode("image", "UTF-8") + "=" + URLEncoder.encode(dataImage, "UTF-8");
-
-        System.out.println("Encode time: " + (System.currentTimeMillis() - encodeTime) + "ms");
-
-        long uploadTime = System.currentTimeMillis();
 
         URL url = new URL("https://api.imgur.com/3/image");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -90,7 +84,6 @@ public class ImageGenerator {
         JSONParser parser = new JSONParser();
         JSONObject object = (JSONObject) parser.parse(stb.toString());
 
-        System.out.println("Upload time: " + (System.currentTimeMillis() - uploadTime) + "ms");
         return (String) ((JSONObject) object.get("data")).get("link");
     }
 
@@ -98,7 +91,7 @@ public class ImageGenerator {
         ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
         ImageIO.write(image, "png", byteArray);
         ImageServer.images.put(user.getIdLong(), byteArray.toByteArray());
-        String url = String.format("http://localhost:8080/image?discordId=%s", user.getIdLong());
+        String url = String.format("http://play.blockgaming.org:8080/image?discordId=%s&id=%s", user.getIdLong(), ImageServer.id++);
         System.out.println(url);
         return url;
     }

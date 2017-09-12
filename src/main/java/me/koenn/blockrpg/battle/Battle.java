@@ -1,11 +1,13 @@
 package me.koenn.blockrpg.battle;
 
 import me.koenn.blockrpg.BlockRPG;
+import me.koenn.blockrpg.battle.creature.Creature;
 import me.koenn.blockrpg.commands.CommandManager;
 import me.koenn.blockrpg.image.MapGenerator;
 import me.koenn.blockrpg.items.IWeaponAction;
 import me.koenn.blockrpg.items.Inventory;
 import me.koenn.blockrpg.items.ItemStack;
+import me.koenn.blockrpg.items.ThreadHelper;
 import me.koenn.blockrpg.util.RPGMessageEmbed;
 import me.koenn.blockrpg.world.Tile;
 import me.koenn.blockrpg.world.World;
@@ -69,13 +71,23 @@ public class Battle {
         ).build();
     }
 
+    private static void sendExplored(MessageChannel channel, Battle battle) {
+        channel.sendTyping().queue(a -> {
+            String image = new MapGenerator(BlockRPG.getInstance().getWorld(battle.user), battle.user).generate(battle.user, true);
+            channel.sendMessage(new MessageBuilder().setEmbed(new RPGMessageEmbed(
+                    "You discovered a new tile:",
+                    battle.location.toString(), battle.user
+            ).setImage(new MessageEmbed.ImageInfo(image, "", 500, 500))).build()).queue();
+        });
+    }
+
     public Message executeMove(IWeaponAction move, MessageChannel channel) {
         Message message = move.execute(this.user, channel, this);
         if (message != null) {
             this.usedMove = true;
             return message;
         } else {
-            return new MessageBuilder().append("Error while executing move ").append(move).build();
+            return new MessageBuilder().append(String.format("Error while executing move \'%s\': %s", move.getActionName(), message)).build();
         }
     }
 
@@ -86,13 +98,10 @@ public class Battle {
             BlockRPG blockRPG = BlockRPG.getInstance();
             blockRPG.getUserBattles().remove(this.user.getIdLong());
             blockRPG.setUserLocation(this.user, this.location.getLocation());
-            channel.sendTyping().queue(a -> {
-                String image = new MapGenerator(blockRPG.getWorld(this.user), this.user).generate(this.user, true);
-                channel.sendMessage(new MessageBuilder().setEmbed(new RPGMessageEmbed(
-                        "You discovered a new tile:",
-                        this.location.toString(), this.user
-                ).setImage(new MessageEmbed.ImageInfo(image, "", 500, 500))).build()).queue();
-            });
+            new Thread(() -> {
+                ThreadHelper.sleep(200);
+                sendExplored(channel, this);
+            }).start();
             return;
         }
 
@@ -112,6 +121,7 @@ public class Battle {
             }
 
             ItemStack loot = this.opponent.getType().getLootTable().getLoot();
+            ((Inventory) BlockRPG.getInstance().getStats(this.user).get("inventory")).addItemStack(loot);
             BlockRPG.getInstance().setUserLocation(this.user, this.location.getLocation());
             channel.sendMessage(new MessageBuilder().setEmbed(new RPGMessageEmbed(
                     String.format("You killed %s", this.opponent.getType().getName()),

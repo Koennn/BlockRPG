@@ -48,6 +48,12 @@ public class Inventory {
         return null;
     }
 
+    public void addItemStack(ItemStack itemStack) {
+        if (this.hasItem(itemStack.getType())) {
+            this.getItemStack(itemStack.getType()).add(itemStack.getAmount());
+        }
+    }
+
     public List<ItemStack> getItems() {
         return items;
     }

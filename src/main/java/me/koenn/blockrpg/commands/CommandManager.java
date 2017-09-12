@@ -42,7 +42,9 @@ public class CommandManager extends ListenerAdapter {
     }
 
     private static void addReaction(Message message, String emote) {
-        message.addReaction(message.getGuild().getEmotesByName(emote, false).get(0)).queue();
+        if (!message.getChannel().getType().equals(ChannelType.PRIVATE)) {
+            message.addReaction(message.getGuild().getEmotesByName(emote, false).get(0)).queue();
+        }
     }
 
     @Override
@@ -85,8 +87,8 @@ public class CommandManager extends ListenerAdapter {
             return;
         }
 
-        BlockRPG.getLogger().info(String.format("%s executed command %s", executor.getName(), command.getCommand()));
         addReaction(message, "check");
+        BlockRPG.getLogger().info(String.format("User \'%s\' executed command \'%s\'", executor.getName(), command.getCommand()));
 
         channel.sendTyping().queue(void1 -> {
             Message response;

@@ -1,8 +1,7 @@
-package me.koenn.blockrpg.battle;
+package me.koenn.blockrpg.battle.creature;
 
 import me.koenn.blockrpg.items.IWeaponAction;
 import me.koenn.blockrpg.items.ItemStack;
-import me.koenn.blockrpg.items.ItemType;
 
 /**
  * <p>
@@ -13,16 +12,12 @@ import me.koenn.blockrpg.items.ItemType;
  */
 public class Creature {
 
-    public static final Creature[] CREATURES = new Creature[]{
-            new Creature(CreatureType.SCARY_MONSTER, new ItemStack(ItemType.BASIC_SWORD))
-    };
-
     private final CreatureType type;
     private final int maxHealth;
     private final ItemStack weapon;
     private int health;
 
-    public Creature(CreatureType type, ItemStack weapon) {
+    private Creature(CreatureType type, ItemStack weapon) {
         this.type = type;
         this.health = type.getHealth();
         this.maxHealth = type.getHealth();
@@ -51,5 +46,9 @@ public class Creature {
 
     public IWeaponAction getAction() {
         return this.weapon.getType().getActions()[0];
+    }
+
+    public static Creature create(CreatureType type) {
+        return new Creature(type, type.getWeapon());
     }
 }

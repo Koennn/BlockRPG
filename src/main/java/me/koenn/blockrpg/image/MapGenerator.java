@@ -36,8 +36,6 @@ public class MapGenerator {
         if (cachedMaps.isCached(owner)) {
             return cachedMaps.get(owner);
         }
-        long totalTime = System.currentTimeMillis();
-        long drawTime = System.currentTimeMillis();
         ImageGenerator generator = new ImageGenerator(503, 503);
         int realX, realY = 3;
         for (int y = 0; y < 10; y++) {
@@ -49,10 +47,8 @@ public class MapGenerator {
             }
             realY += 50;
         }
-        System.out.println("Draw time: " + (System.currentTimeMillis() - drawTime) + "ms");
         String image = generator.generate(owner);
         cachedMaps.put(owner, image);
-        System.out.println("Total time: " + (System.currentTimeMillis() - totalTime) + "ms");
         return image;
     }
 

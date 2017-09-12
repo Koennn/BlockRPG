@@ -1,6 +1,7 @@
 package me.koenn.blockrpg;
 
 import me.koenn.blockrpg.battle.Battle;
+import me.koenn.blockrpg.battle.creature.CreatureType;
 import me.koenn.blockrpg.commands.CommandManager;
 import me.koenn.blockrpg.data.FileLoader;
 import me.koenn.blockrpg.data.Stats;
@@ -15,6 +16,7 @@ import net.dv8tion.jda.core.utils.SimpleLog;
 
 import javax.security.auth.login.LoginException;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -64,6 +66,15 @@ public final class BlockRPG {
         logger.info("Loading files...");
         this.stats = FileLoader.loadStats(new File("stats.json"));
         this.worlds = FileLoader.loadWorlds(new File("worlds.json"));
+
+        logger.info("Loading creatures...");
+        try {
+            CreatureType.loadCreatures(new File("data"));
+        } catch (IOException e) {
+            logger.fatal("Error while loading creatures: " + e);
+            e.printStackTrace();
+            return;
+        }
 
         logger.info("Successfully loaded BlockRPG!");
     }

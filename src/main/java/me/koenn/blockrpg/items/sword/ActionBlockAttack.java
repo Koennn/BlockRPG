@@ -1,7 +1,7 @@
 package me.koenn.blockrpg.items.sword;
 
 import me.koenn.blockrpg.battle.Battle;
-import me.koenn.blockrpg.battle.CreatureType;
+import me.koenn.blockrpg.battle.creature.CreatureType;
 import me.koenn.blockrpg.items.IWeaponAction;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;

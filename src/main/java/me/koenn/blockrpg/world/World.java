@@ -2,7 +2,8 @@ package me.koenn.blockrpg.world;
 
 import me.koenn.blockrpg.BlockRPG;
 import me.koenn.blockrpg.battle.Battle;
-import me.koenn.blockrpg.battle.Creature;
+import me.koenn.blockrpg.battle.creature.Creature;
+import me.koenn.blockrpg.battle.creature.CreatureType;
 import me.koenn.blockrpg.util.Chance;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
@@ -69,7 +70,7 @@ public class World {
         if (!Chance.of(20)) {
             return null;
         }
-        Battle battle = new Battle(user, channel, Creature.CREATURES[0], tile);
+        Battle battle = new Battle(user, channel, Creature.create(CreatureType.CREATURES.get("scary_monster")), tile);
         BlockRPG.getInstance().getUserBattles().put(user.getIdLong(), battle);
         return battle.start();
     }

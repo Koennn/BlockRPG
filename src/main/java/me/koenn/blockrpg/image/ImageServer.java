@@ -18,6 +18,7 @@ import java.util.Map;
 public class ImageServer implements HttpHandler {
 
     public static HashMap<Long, byte[]> images = new HashMap<>();
+    public static int id;
     public static HttpServer server;
 
     public ImageServer() {
@@ -74,5 +75,9 @@ public class ImageServer implements HttpHandler {
         OutputStream stream = httpExchange.getResponseBody();
         stream.write(data, 0, data.length);
         stream.close();
+
+        if (id == Integer.MAX_VALUE) {
+            id = 0;
+        }
     }
 }

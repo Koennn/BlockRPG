@@ -1,8 +1,8 @@
 package me.koenn.blockrpg.items.sword;
 
 import me.koenn.blockrpg.battle.Battle;
-import me.koenn.blockrpg.battle.Creature;
-import me.koenn.blockrpg.battle.CreatureType;
+import me.koenn.blockrpg.battle.creature.Creature;
+import me.koenn.blockrpg.battle.creature.CreatureType;
 import me.koenn.blockrpg.items.IWeaponAction;
 import me.koenn.blockrpg.util.HealthHelper;
 import me.koenn.blockrpg.util.RPGMessageEmbed;
