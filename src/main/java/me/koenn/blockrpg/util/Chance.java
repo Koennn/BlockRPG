@@ -5,6 +5,6 @@ import java.util.concurrent.ThreadLocalRandom;
 public final class Chance {
 
     public static boolean of(int percentage) {
-        return ThreadLocalRandom.current().nextInt(percentage) < percentage + 1;
+        return ThreadLocalRandom.current().nextInt(100) < percentage + 1;
     }
 }

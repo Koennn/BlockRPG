@@ -66,7 +66,7 @@ public class World {
     }
 
     public Message getBattle(User user, MessageChannel channel, Tile tile) {
-        if (Chance.of(20)) {
+        if (!Chance.of(20)) {
             return null;
         }
         Battle battle = new Battle(user, channel, Creature.CREATURES[0], tile);

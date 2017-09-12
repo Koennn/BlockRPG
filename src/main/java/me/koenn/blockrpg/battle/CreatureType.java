@@ -14,18 +14,20 @@ import net.dv8tion.jda.core.entities.Message;
  */
 public enum CreatureType {
 
-    SCARY_MONSTER("Scary Monster", new ItemStack(ItemType.BASIC_SWORD), new Texture("scary_monster", "scary_monster.png"), 10);
+    SCARY_MONSTER("Scary Monster", new ItemStack(ItemType.BASIC_SWORD), new Texture("scary_monster", "scary_monster.png"), 10, () -> new ItemStack(ItemType.COOKIE));
 
     private final String name;
     private final ItemStack weapon;
     private final Texture texture;
     private final int health;
+    private final LootTable lootTable;
 
-    CreatureType(String name, ItemStack weapon, Texture texture, int health) {
+    CreatureType(String name, ItemStack weapon, Texture texture, int health, LootTable lootTable) {
         this.name = name;
         this.weapon = weapon;
         this.texture = texture;
         this.health = health;
+        this.lootTable = lootTable;
     }
 
     public String getName() {
@@ -42,5 +44,9 @@ public enum CreatureType {
 
     public int getHealth() {
         return health;
+    }
+
+    public LootTable getLootTable() {
+        return lootTable;
     }
 }
