@@ -2,6 +2,7 @@ package me.koenn.blockrpg.battle;
 
 import me.koenn.blockrpg.items.IWeaponAction;
 import me.koenn.blockrpg.items.ItemStack;
+import me.koenn.blockrpg.items.ItemType;
 
 /**
  * <p>
@@ -11,6 +12,10 @@ import me.koenn.blockrpg.items.ItemStack;
  * Written by Koen Willemse, June 2017
  */
 public class Creature {
+
+    public static final Creature[] CREATURES = new Creature[]{
+            new Creature(CreatureType.SCARY_MONSTER, new ItemStack(ItemType.BASIC_SWORD))
+    };
 
     private final CreatureType type;
     private final int maxHealth;

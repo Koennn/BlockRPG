@@ -27,6 +27,11 @@ public class MapGenerator {
         this.center = BlockRPG.getInstance().getUserLocation(owner);
     }
 
+    public String generate(User owner, boolean clearCache) {
+        MapGenerator.cachedMaps.clearCache(owner);
+        return this.generate(owner);
+    }
+
     public String generate(User owner) {
         if (cachedMaps.isCached(owner)) {
             return cachedMaps.get(owner);

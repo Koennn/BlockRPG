@@ -3,9 +3,7 @@ package me.koenn.blockrpg.world;
 import me.koenn.blockrpg.BlockRPG;
 import me.koenn.blockrpg.battle.Battle;
 import me.koenn.blockrpg.battle.Creature;
-import me.koenn.blockrpg.battle.CreatureType;
-import me.koenn.blockrpg.items.ItemStack;
-import me.koenn.blockrpg.items.ItemType;
+import me.koenn.blockrpg.util.Chance;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
@@ -68,10 +66,10 @@ public class World {
     }
 
     public Message getBattle(User user, MessageChannel channel, Tile tile) {
-        /*if (ThreadLocalRandom.current().nextInt(10) != 1) {
+        if (Chance.of(20)) {
             return null;
-        }*/
-        Battle battle = new Battle(user, channel, new Creature(CreatureType.SCARY_MONSTER, new ItemStack(ItemType.BASIC_SWORD)), tile);
+        }
+        Battle battle = new Battle(user, channel, Creature.CREATURES[0], tile);
         BlockRPG.getInstance().getUserBattles().put(user.getIdLong(), battle);
         return battle.start();
     }

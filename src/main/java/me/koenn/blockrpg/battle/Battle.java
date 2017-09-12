@@ -1,6 +1,7 @@
 package me.koenn.blockrpg.battle;
 
 import me.koenn.blockrpg.BlockRPG;
+import me.koenn.blockrpg.image.MapGenerator;
 import me.koenn.blockrpg.items.IWeaponAction;
 import me.koenn.blockrpg.items.Inventory;
 import me.koenn.blockrpg.items.ItemStack;
@@ -30,8 +31,8 @@ public class Battle {
     private final Creature opponent;
     private final Tile location;
     private final LinkedHashMap<Integer, IWeaponAction> userMoves = new LinkedHashMap<>();
-    private boolean turn;
     private int userHealth;
+    private boolean usedMove;
 
     public Battle(User user, MessageChannel channel, Creature opponent, Tile location) {
         this.user = user;
@@ -70,6 +71,7 @@ public class Battle {
     public Message executeMove(IWeaponAction move, MessageChannel channel) {
         Message message = move.execute(this.user, channel, this);
         if (message != null) {
+            this.usedMove = true;
             return message;
         } else {
             return new MessageBuilder().append("Error while executing move ").append(move).build();
@@ -77,10 +79,19 @@ public class Battle {
     }
 
     public void endTurn(MessageChannel channel) {
-        this.turn = false;
+        this.usedMove = false;
 
         if (this.checkBattleOver()) {
-            BlockRPG.getInstance().getUserBattles().remove(this.user.getIdLong());
+            BlockRPG blockRPG = BlockRPG.getInstance();
+            blockRPG.getUserBattles().remove(this.user.getIdLong());
+            blockRPG.setUserLocation(this.user, this.location.getLocation());
+            channel.sendTyping().queue(a -> {
+                String image = new MapGenerator(blockRPG.getWorld(this.user), this.user).generate(this.user, true);
+                channel.sendMessage(new MessageBuilder().setEmbed(new RPGMessageEmbed(
+                        "You discovered a new tile:",
+                        this.location.toString(), this.user
+                ).setImage(new MessageEmbed.ImageInfo(image, "", 500, 500))).build()).queue();
+            });
             return;
         }
 
@@ -122,16 +133,8 @@ public class Battle {
         return opponent;
     }
 
-    public Tile getLocation() {
-        return location;
-    }
-
     public LinkedHashMap<Integer, IWeaponAction> getUserMoves() {
         return userMoves;
-    }
-
-    public boolean isTurn() {
-        return turn;
     }
 
     public int getUserHealth() {
@@ -140,5 +143,9 @@ public class Battle {
 
     public void setUserHealth(int userHealth) {
         this.userHealth = userHealth;
+    }
+
+    public boolean hasUsedMove() {
+        return this.usedMove;
     }
 }

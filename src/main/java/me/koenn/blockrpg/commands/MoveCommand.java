@@ -52,6 +52,9 @@ public class MoveCommand implements ICommand {
         }
 
         IWeaponAction move = battle.getUserMoves().get(moveId);
+        if (move == null) {
+            return new MessageBuilder().append("Use **\\move <move-id>** to use a move.").build();
+        }
         return battle.executeMove(move, channel);
     }
 
@@ -62,6 +65,8 @@ public class MoveCommand implements ICommand {
             return;
         }
 
-        battle.endTurn(channel);
+        if (battle.hasUsedMove()) {
+            battle.endTurn(channel);
+        }
     }
 }
