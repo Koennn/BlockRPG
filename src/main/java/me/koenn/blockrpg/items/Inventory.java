@@ -8,10 +8,8 @@ import java.util.List;
 
 /**
  * <p>
- * Copyright (C) Koenn - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by Koen Willemse, June 2017
+ * Copyright (C) Koenn - All Rights Reserved Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential Written by Koen Willemse, June 2017
  */
 public class Inventory {
 
@@ -19,8 +17,8 @@ public class Inventory {
 
     public Inventory() {
         this(new ArrayList<>());
-        this.items.add(new ItemStack(ItemType.BASIC_SWORD));
-        this.items.add(new ItemStack(ItemType.COOKIE, 12));
+        //this.items.add(new ItemStack(ItemType.BASIC_SWORD));
+        //this.items.add(new ItemStack(ItemType.COOKIE, 12));
     }
 
     public Inventory(JSONObject inventory) {
@@ -41,7 +39,7 @@ public class Inventory {
 
     public ItemStack getItemStack(ItemType type) {
         for (ItemStack stack : this.items) {
-            if (stack.getType().equals(type)) {
+            if (stack.getType().getName().equals(type.getName())) {
                 return stack;
             }
         }

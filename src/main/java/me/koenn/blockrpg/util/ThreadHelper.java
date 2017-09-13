@@ -1,4 +1,4 @@
-package me.koenn.blockrpg.items;
+package me.koenn.blockrpg.util;
 
 /**
  * <p>

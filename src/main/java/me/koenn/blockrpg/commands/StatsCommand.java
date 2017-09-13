@@ -2,6 +2,7 @@ package me.koenn.blockrpg.commands;
 
 import me.koenn.blockrpg.BlockRPG;
 import me.koenn.blockrpg.data.Stats;
+import me.koenn.blockrpg.util.WorldHelper;
 import me.koenn.blockrpg.world.Vector2;
 import me.koenn.blockrpg.world.World;
 import net.dv8tion.jda.core.MessageBuilder;
@@ -16,10 +17,8 @@ import java.util.ArrayList;
 
 /**
  * <p>
- * Copyright (C) Koenn - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by Koen Willemse, June 2017
+ * Copyright (C) Koenn - All Rights Reserved Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential Written by Koen Willemse, June 2017
  */
 public class StatsCommand implements ICommand {
 
@@ -56,9 +55,9 @@ public class StatsCommand implements ICommand {
             newUser = true;
         }
 
-        if (!blockRPG.hasWorld(executor)) {
-            blockRPG.addWorld(new World(executor.getIdLong()));
-            blockRPG.setUserLocation(executor, new Vector2());
+        if (!WorldHelper.hasWorld(executor)) {
+            WorldHelper.addWorld(new World(executor.getIdLong()));
+            WorldHelper.setUserLocation(executor, new Vector2());
             newUser = true;
         }
 

@@ -7,8 +7,9 @@ import me.koenn.blockrpg.image.MapGenerator;
 import me.koenn.blockrpg.items.IWeaponAction;
 import me.koenn.blockrpg.items.Inventory;
 import me.koenn.blockrpg.items.ItemStack;
-import me.koenn.blockrpg.items.ThreadHelper;
 import me.koenn.blockrpg.util.RPGMessageEmbed;
+import me.koenn.blockrpg.util.ThreadHelper;
+import me.koenn.blockrpg.util.WorldHelper;
 import me.koenn.blockrpg.world.Tile;
 import me.koenn.blockrpg.world.World;
 import net.dv8tion.jda.core.MessageBuilder;
@@ -42,7 +43,17 @@ public class Battle {
         this.channel = channel;
         this.opponent = opponent;
         this.location = location;
-        this.userHealth = (int) BlockRPG.getInstance().getStats(user).get("health");
+        this.userHealth = Math.toIntExact((long) BlockRPG.getInstance().getStats(user).get("health"));
+    }
+
+    private static void sendExplored(MessageChannel channel, Battle battle) {
+        channel.sendTyping().queue(a -> {
+            String image = new MapGenerator(WorldHelper.getWorld(battle.user), battle.user).generate(battle.user, true);
+            channel.sendMessage(new MessageBuilder().setEmbed(new RPGMessageEmbed(
+                    "You discovered a new tile:",
+                    battle.location.toString(), battle.user
+            ).setImage(new MessageEmbed.ImageInfo(image, "", 500, 500))).build()).queue();
+        });
     }
 
     public Message start() {
@@ -71,16 +82,6 @@ public class Battle {
         ).build();
     }
 
-    private static void sendExplored(MessageChannel channel, Battle battle) {
-        channel.sendTyping().queue(a -> {
-            String image = new MapGenerator(BlockRPG.getInstance().getWorld(battle.user), battle.user).generate(battle.user, true);
-            channel.sendMessage(new MessageBuilder().setEmbed(new RPGMessageEmbed(
-                    "You discovered a new tile:",
-                    battle.location.toString(), battle.user
-            ).setImage(new MessageEmbed.ImageInfo(image, "", 500, 500))).build()).queue();
-        });
-    }
-
     public Message executeMove(IWeaponAction move, MessageChannel channel) {
         Message message = move.execute(this.user, channel, this);
         if (message != null) {
@@ -97,7 +98,7 @@ public class Battle {
         if (this.checkBattleOver()) {
             BlockRPG blockRPG = BlockRPG.getInstance();
             blockRPG.getUserBattles().remove(this.user.getIdLong());
-            blockRPG.setUserLocation(this.user, this.location.getLocation());
+            WorldHelper.setUserLocation(this.user, this.location.getLocation());
             new Thread(() -> {
                 ThreadHelper.sleep(200);
                 sendExplored(channel, this);
@@ -115,14 +116,14 @@ public class Battle {
         }
 
         if (this.opponent.getHealth() <= 0) {
-            World world = BlockRPG.getInstance().getWorld(user);
+            World world = WorldHelper.getWorld(user);
             if (world == null) {
                 throw new NullPointerException("Unable to find users world");
             }
 
             ItemStack loot = this.opponent.getType().getLootTable().getLoot();
             ((Inventory) BlockRPG.getInstance().getStats(this.user).get("inventory")).addItemStack(loot);
-            BlockRPG.getInstance().setUserLocation(this.user, this.location.getLocation());
+            WorldHelper.setUserLocation(this.user, this.location.getLocation());
             channel.sendMessage(new MessageBuilder().setEmbed(new RPGMessageEmbed(
                     String.format("You killed %s", this.opponent.getType().getName()),
                     String.format("**Your health:** %s\n**Loot received:** %s", this.userHealth, loot.toString()),

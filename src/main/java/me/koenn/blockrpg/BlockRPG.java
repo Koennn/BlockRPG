@@ -6,9 +6,10 @@ import me.koenn.blockrpg.commands.CommandManager;
 import me.koenn.blockrpg.data.FileLoader;
 import me.koenn.blockrpg.data.Stats;
 import me.koenn.blockrpg.image.ImageServer;
+import me.koenn.blockrpg.items.ItemType;
+import me.koenn.blockrpg.util.Autosaver;
 import me.koenn.blockrpg.util.Console;
 import me.koenn.blockrpg.util.ThreadManager;
-import me.koenn.blockrpg.world.Vector2;
 import me.koenn.blockrpg.world.World;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
@@ -16,16 +17,13 @@ import net.dv8tion.jda.core.utils.SimpleLog;
 
 import javax.security.auth.login.LoginException;
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
 /**
  * <p>
- * Copyright (C) Koenn - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by Koen Willemse, June 2017
+ * Copyright (C) Koenn - All Rights Reserved Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential Written by Koen Willemse, June 2017
  */
 public final class BlockRPG {
 
@@ -36,8 +34,7 @@ public final class BlockRPG {
     private DiscordBot bot;
     private List<Stats> stats;
     private List<World> worlds;
-    private HashMap<Long, Vector2> userLocations = new HashMap<>();
-    private HashMap<Long, Battle> userBattles = new HashMap<>();
+    private final HashMap<Long, Battle> userBattles = new HashMap<>();
 
     private BlockRPG(String token) {
         logger = SimpleLog.getLog("BlockRPG");
@@ -63,6 +60,15 @@ public final class BlockRPG {
         threadManager.createThread("image-server", () -> imageServer = new ImageServer());
         threadManager.createThread("console", new Console(), true);
 
+        logger.info("Loading items...");
+        try {
+            ItemType.loadItemTypes(new File("data"));
+        } catch (Exception e) {
+            logger.fatal("Error while loading items: " + e);
+            e.printStackTrace();
+            return;
+        }
+
         logger.info("Loading files...");
         this.stats = FileLoader.loadStats(new File("stats.json"));
         this.worlds = FileLoader.loadWorlds(new File("worlds.json"));
@@ -70,11 +76,14 @@ public final class BlockRPG {
         logger.info("Loading creatures...");
         try {
             CreatureType.loadCreatures(new File("data"));
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.fatal("Error while loading creatures: " + e);
             e.printStackTrace();
             return;
         }
+
+        logger.info("Starting autosaver...");
+        threadManager.createThread("autosaver", new Autosaver(), true);
 
         logger.info("Successfully loaded BlockRPG!");
     }
@@ -85,10 +94,6 @@ public final class BlockRPG {
 
     public static BlockRPG getInstance() {
         return instance;
-    }
-
-    public static ImageServer getImageServer() {
-        return imageServer;
     }
 
     public static void main(String[] args) {
@@ -105,6 +110,9 @@ public final class BlockRPG {
         if (ImageServer.server != null) {
             ImageServer.server.stop(0);
         }
+
+        FileLoader.saveStats(new File("stats.json"), BlockRPG.getInstance().getStats());
+        FileLoader.saveWorlds(new File("worlds.json"), BlockRPG.getInstance().getWorlds());
 
         if (bot != null && bot.getJda() != null) {
             bot.getJda().shutdown();
@@ -139,38 +147,15 @@ public final class BlockRPG {
         FileLoader.saveStats(new File("stats.json"), this.stats);
     }
 
-    public boolean hasWorld(User user) {
-        return getWorld(user) != null;
-    }
-
-    public World getWorld(User user) {
-        long userId = user.getIdLong();
-        for (World world : this.worlds) {
-            if (world.getUserId() == userId) {
-                return world;
-            }
-        }
-        return null;
-    }
-
-    public void addWorld(World world) {
-        this.worlds.add(world);
-        FileLoader.saveWorlds(new File("worlds.json"), this.worlds);
-    }
-
-    public Vector2 getUserLocation(User user) {
-        return this.userLocations.get(user.getIdLong());
-    }
-
-    public void setUserLocation(User user, Vector2 location) {
-        this.userLocations.put(user.getIdLong(), location);
-    }
-
     public HashMap<Long, Battle> getUserBattles() {
         return userBattles;
     }
 
-    public DiscordBot getBot() {
-        return bot;
+    public List<World> getWorlds() {
+        return worlds;
+    }
+
+    public List<Stats> getStats() {
+        return stats;
     }
 }

@@ -4,10 +4,8 @@ import org.json.simple.JSONObject;
 
 /**
  * <p>
- * Copyright (C) Koenn - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by Koen Willemse, June 2017
+ * Copyright (C) Koenn - All Rights Reserved Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential Written by Koen Willemse, June 2017
  */
 public class ItemStack {
 
@@ -15,7 +13,7 @@ public class ItemStack {
     private int amount;
 
     public ItemStack(JSONObject itemStack) {
-        this(itemStack == null ? null : ItemType.valueOf((String) itemStack.get("type")), itemStack == null ? 1 : Math.toIntExact((long) itemStack.get("amount")));
+        this(itemStack == null ? null : ItemType.getItem((String) itemStack.get("type")), itemStack == null ? 1 : Math.toIntExact((long) itemStack.get("amount")));
     }
 
     public ItemStack(ItemType type) {
@@ -39,17 +37,17 @@ public class ItemStack {
         return amount;
     }
 
-    public void add(int amount) {
-        this.amount += amount;
-    }
-
     public void setAmount(int amount) {
         this.amount = amount;
     }
 
+    public void add(int amount) {
+        this.amount += amount;
+    }
+
     public JSONObject getJson() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("type", this.type.name());
+        jsonObject.put("type", this.type.getName());
         jsonObject.put("amount", this.amount);
         return jsonObject;
     }

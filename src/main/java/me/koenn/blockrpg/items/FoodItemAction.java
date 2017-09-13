@@ -12,7 +12,7 @@ public class FoodItemAction implements IItemAction {
     private final String type;
     private final int restoreAmount;
 
-    public FoodItemAction(String type, int restoreAmount) {
+    public FoodItemAction(String type, Integer restoreAmount) {
         this.type = type;
         this.restoreAmount = restoreAmount;
     }
@@ -21,7 +21,7 @@ public class FoodItemAction implements IItemAction {
     public Message execute(User executor, MessageChannel channel) {
         HealthHelper.heal(executor, this.restoreAmount);
         return new MessageBuilder().setEmbed(new RPGMessageEmbed(
-                String.format("You ate a %s %s", this.type, ItemType.valueOf(this.type.toUpperCase()).getEmote()),
+                String.format("You ate a %s %s", this.type, ItemType.getItem(this.type.toUpperCase()).getEmote()),
                 String.format("**Restored %s health**\n**Your health:** %s", this.restoreAmount, HealthHelper.getHealth(executor)),
                 executor)
         ).build();

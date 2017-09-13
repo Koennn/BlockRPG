@@ -2,8 +2,9 @@ package me.koenn.blockrpg.commands;
 
 import me.koenn.blockrpg.BlockRPG;
 import me.koenn.blockrpg.image.MapGenerator;
-import me.koenn.blockrpg.util.Direction;
 import me.koenn.blockrpg.util.RPGMessageEmbed;
+import me.koenn.blockrpg.util.WorldHelper;
+import me.koenn.blockrpg.world.Direction;
 import me.koenn.blockrpg.world.Tile;
 import me.koenn.blockrpg.world.Vector2;
 import me.koenn.blockrpg.world.World;
@@ -17,10 +18,8 @@ import java.util.Random;
 
 /**
  * <p>
- * Copyright (C) Koenn - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by Koen Willemse, June 2017
+ * Copyright (C) Koenn - All Rights Reserved Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential Written by Koen Willemse, June 2017
  */
 public class ExploreCommand implements ICommand {
 
@@ -48,11 +47,10 @@ public class ExploreCommand implements ICommand {
 
     @Override
     public Message execute(User executor, MessageChannel channel, String[] args) {
-        BlockRPG blockRPG = BlockRPG.getInstance();
-        if (!blockRPG.hasWorld(executor)) {
+        if (!WorldHelper.hasWorld(executor)) {
             return new MessageBuilder().append("Use **\\stats** first to start playing!").build();
         }
-        World world = blockRPG.getWorld(executor);
+        World world = WorldHelper.getWorld(executor);
         if (world == null) {
             throw new NullPointerException("Unable to find users world");
         }
@@ -61,7 +59,7 @@ public class ExploreCommand implements ICommand {
             return new MessageBuilder().append("You are in a battle right now!").build();
         }
 
-        Vector2 moved = Direction.valueOf(args[0].toUpperCase()).move(blockRPG.getUserLocation(executor).clone());
+        Vector2 moved = Direction.valueOf(args[0].toUpperCase()).move(WorldHelper.getUserLocation(executor).clone());
         if (world.isExplored(moved)) {
             return new MessageBuilder().append("You already explored this tile! Use **\\travel** to get there.").build();
         }
@@ -72,9 +70,9 @@ public class ExploreCommand implements ICommand {
         }
 
         Tile tile = world.explore(moved);
-        blockRPG.setUserLocation(executor, tile.getLocation());
+        WorldHelper.setUserLocation(executor, tile.getLocation());
         MapGenerator.cachedMaps.clearCache(executor);
-        String image = new MapGenerator(BlockRPG.getInstance().getWorld(executor), executor).generate(executor);
+        String image = new MapGenerator(WorldHelper.getWorld(executor), executor).generate(executor);
         return new MessageBuilder().setEmbed(new RPGMessageEmbed(
                 "You discovered a new tile:",
                 tile.toString(), executor

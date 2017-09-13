@@ -9,7 +9,7 @@ public class ThreadManager implements Thread.UncaughtExceptionHandler {
 
     private final List<Thread> activeThreads;
     private boolean enabled;
-    private SimpleLog logger;
+    private final SimpleLog logger;
 
     public ThreadManager() {
         this.activeThreads = new ArrayList<>();

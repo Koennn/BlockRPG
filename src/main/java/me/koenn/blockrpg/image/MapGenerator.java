@@ -1,7 +1,7 @@
 package me.koenn.blockrpg.image;
 
-import me.koenn.blockrpg.BlockRPG;
 import me.koenn.blockrpg.util.Cache;
+import me.koenn.blockrpg.util.WorldHelper;
 import me.koenn.blockrpg.world.Vector2;
 import me.koenn.blockrpg.world.World;
 import net.dv8tion.jda.core.entities.User;
@@ -24,7 +24,7 @@ public class MapGenerator {
 
     public MapGenerator(World world, User owner) {
         this.world = world;
-        this.center = BlockRPG.getInstance().getUserLocation(owner);
+        this.center = WorldHelper.getUserLocation(owner);
     }
 
     public String generate(User owner, boolean clearCache) {

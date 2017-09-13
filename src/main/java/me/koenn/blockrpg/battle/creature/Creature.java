@@ -5,10 +5,8 @@ import me.koenn.blockrpg.items.ItemStack;
 
 /**
  * <p>
- * Copyright (C) Koenn - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by Koen Willemse, June 2017
+ * Copyright (C) Koenn - All Rights Reserved Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential Written by Koen Willemse, June 2017
  */
 public class Creature {
 
@@ -22,6 +20,10 @@ public class Creature {
         this.health = type.getHealth();
         this.maxHealth = type.getHealth();
         this.weapon = weapon;
+    }
+
+    public static Creature create(CreatureType type) {
+        return new Creature(type, type.getWeapon());
     }
 
     public CreatureType getType() {
@@ -46,9 +48,5 @@ public class Creature {
 
     public IWeaponAction getAction() {
         return this.weapon.getType().getActions()[0];
-    }
-
-    public static Creature create(CreatureType type) {
-        return new Creature(type, type.getWeapon());
     }
 }

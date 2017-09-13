@@ -35,7 +35,7 @@ public class InfoCommand implements ICommand {
         String typeString = StringHelper.concat(args);
         ItemType type;
         try {
-            type = ItemType.valueOf(typeString.toUpperCase());
+            type = ItemType.getItem(typeString.toLowerCase());
         } catch (Exception ex) {
             return new MessageBuilder().setEmbed(new RPGMessageEmbed(String.format("%s is not a valid item", typeString), "", executor)).build();
         }

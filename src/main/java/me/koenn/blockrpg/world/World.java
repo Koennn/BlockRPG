@@ -5,6 +5,7 @@ import me.koenn.blockrpg.battle.Battle;
 import me.koenn.blockrpg.battle.creature.Creature;
 import me.koenn.blockrpg.battle.creature.CreatureType;
 import me.koenn.blockrpg.util.Chance;
+import me.koenn.blockrpg.util.JSONHelper;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
@@ -15,32 +16,31 @@ import java.util.HashMap;
 
 /**
  * <p>
- * Copyright (C) Koenn - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by Koen Willemse, June 2017
+ * Copyright (C) Koenn - All Rights Reserved Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential Written by Koen Willemse, June 2017
  */
 public class World {
 
     private final long userId;
     private final HashMap<Vector2, Tile> tiles = new HashMap<>();
+    private Vector2 location;
 
     public World(long userId) {
         this.userId = userId;
-        final Vector2 homeTile = new Vector2(0, 0);
-        final Tile tile = new Tile(homeTile);
+        Vector2 homeTile = new Vector2(0, 0);
+        Tile tile = new Tile(homeTile);
         tile.setProperty("homeTile", true);
         this.tiles.put(homeTile, tile);
+        this.location = homeTile;
     }
 
     public World(JSONObject world) {
         this.userId = (long) world.get("userId");
-        final JSONArray tiles = (JSONArray) world.get("tiles");
+        this.location = JSONHelper.jsonToLocation((JSONObject) world.get("location"));
+        JSONArray tiles = (JSONArray) world.get("tiles");
         for (Object tileObject : tiles) {
-            final JSONObject tileJson = (JSONObject) tileObject;
-            final Vector2 location = new Vector2(Math.toIntExact((long) tileJson.get("x")), Math.toIntExact((long) tileJson.get("y")));
-            final JSONObject properties = (JSONObject) tileJson.get("properties");
-            this.tiles.put(location, new Tile(location, properties));
+            Tile tile = JSONHelper.jsonToTile((JSONObject) tileObject);
+            this.tiles.put(tile.getLocation(), tile);
         }
     }
 
@@ -75,27 +75,25 @@ public class World {
         return battle.start();
     }
 
-    public JSONObject toJson() {
-        final JSONObject jsonObject = new JSONObject();
-        final JSONArray tiles = new JSONArray();
-        for (Tile tile : this.tiles.values()) {
-            final JSONObject tileJson = new JSONObject();
-            tileJson.put("x", tile.getLocation().x);
-            tileJson.put("y", tile.getLocation().x);
-            final JSONObject propertiesJson = new JSONObject();
-            final HashMap<String, Object> properties = tile.getProperties();
-            for (String key : properties.keySet()) {
-                propertiesJson.put(key, properties.get(key));
-            }
-            tileJson.put("properties", propertiesJson);
-            tiles.add(tileJson);
-        }
+    public JSONObject toJSON() {
+        JSONObject jsonObject = new JSONObject();
+        JSONArray tiles = new JSONArray();
+        this.tiles.values().forEach(tile -> tiles.add(JSONHelper.tileToJson(tile)));
         jsonObject.put("tiles", tiles);
         jsonObject.put("userId", this.userId);
+        jsonObject.put("location", JSONHelper.locationToJson(this.location));
         return jsonObject;
     }
 
     public long getUserId() {
         return userId;
+    }
+
+    public Vector2 getLocation() {
+        return location;
+    }
+
+    public void setLocation(Vector2 location) {
+        this.location = location;
     }
 }

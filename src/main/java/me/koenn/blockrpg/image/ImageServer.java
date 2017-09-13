@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class ImageServer implements HttpHandler {
 
-    public static HashMap<Long, byte[]> images = new HashMap<>();
+    public static final HashMap<Long, byte[]> images = new HashMap<>();
     public static int id;
     public static HttpServer server;
 
