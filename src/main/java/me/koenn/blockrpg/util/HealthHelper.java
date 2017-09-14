@@ -16,7 +16,7 @@ public final class HealthHelper {
     }
 
     public static int getHealth(User user) {
-        return (int) BlockRPG.getInstance().getStats(user).get("health");
+        return Integer.parseInt(String.valueOf(BlockRPG.getInstance().getStats(user).get("health")));
     }
 
     public static void setHealth(User user, int health) {

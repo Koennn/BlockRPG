@@ -8,8 +8,8 @@ import java.util.List;
 public class ThreadManager implements Thread.UncaughtExceptionHandler {
 
     private final List<Thread> activeThreads;
-    private boolean enabled;
     private final SimpleLog logger;
+    private boolean enabled;
 
     public ThreadManager() {
         this.activeThreads = new ArrayList<>();

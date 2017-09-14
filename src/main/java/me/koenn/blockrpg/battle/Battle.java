@@ -43,7 +43,7 @@ public class Battle {
         this.channel = channel;
         this.opponent = opponent;
         this.location = location;
-        this.userHealth = Math.toIntExact((long) BlockRPG.getInstance().getStats(user).get("health"));
+        this.userHealth = Integer.valueOf(String.valueOf(BlockRPG.getInstance().getStats(user).get("health")));
     }
 
     private static void sendExplored(MessageChannel channel, Battle battle) {

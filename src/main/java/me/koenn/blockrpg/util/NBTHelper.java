@@ -5,8 +5,13 @@ import me.koenn.blockrpg.battle.creature.CreatureType;
 import me.koenn.blockrpg.battle.creature.LootTable;
 import me.koenn.blockrpg.image.Texture;
 import me.koenn.blockrpg.items.IItemAction;
+import me.koenn.blockrpg.items.IWeaponAction;
 import me.koenn.blockrpg.items.ItemStack;
 import me.koenn.blockrpg.items.ItemType;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * <p>
@@ -14,6 +19,9 @@ import me.koenn.blockrpg.items.ItemType;
  * Proprietary and confidential Written by Koen Willemse, August 2017
  */
 public final class NBTHelper {
+
+    private static final String ITEM_ACTION_PACKAGE = "me.koenn.blockrpg.items.";
+    private static final String WEAPON_ACTION_PACKAGE = "me.koenn.blockrpg.items.weapon.";
 
     public static ItemType parseItem(CompoundTag tag) {
         String name = getChildTag(tag.getValue(), "name", StringTag.class).getValue();
@@ -23,13 +31,20 @@ public final class NBTHelper {
 
         switch (actionType) {
             case "item":
-                return new ItemType(name, emote, description, parseItemAction(getChildTag(tag.getValue(), "action", CompoundTag.class)));
+                return new ItemType(tag.getName(), name, emote, description, parseItemAction(getChildTag(tag.getValue(), "action", CompoundTag.class)));
             case "weapon":
-                return null;
+                return new ItemType(tag.getName(), name, emote, description, parseWeaponActions(getChildTag(tag.getValue(), "actions", ListTag.class)));
             default:
-                return null;
+                return new ItemType(tag.getName(), name, emote, description);
         }
+    }
 
+    public static IWeaponAction[] parseWeaponActions(ListTag<StringTag> tag) {
+        List<IWeaponAction> weaponActions = new ArrayList<>();
+        for (StringTag actionName : tag.getValue()) {
+            weaponActions.add((IWeaponAction) ReflectionHelper.newInstance(ReflectionHelper.getClass(WEAPON_ACTION_PACKAGE + actionName.getValue()), null));
+        }
+        return weaponActions.toArray(new IWeaponAction[weaponActions.size()]);
     }
 
     public static IItemAction parseItemAction(CompoundTag tag) {
@@ -39,7 +54,7 @@ public final class NBTHelper {
         for (int i = 0; i < params.length; i++) {
             params[i] = paramsTag.getValue().get(String.valueOf(i)).getValue();
         }
-        return (IItemAction) ReflectionHelper.newInstance(ReflectionHelper.getClass("me.koenn.blockrpg.items." + type), params);
+        return (IItemAction) ReflectionHelper.newInstance(ReflectionHelper.getClass(ITEM_ACTION_PACKAGE + type), params);
     }
 
     public static CreatureType parseCreature(CompoundTag tag) {
@@ -57,8 +72,10 @@ public final class NBTHelper {
         return new Texture(label, texture);
     }
 
-    public static LootTable parseLoot(ListTag tag) {
-        return () -> null;
+    public static LootTable parseLoot(ListTag<CompoundTag> tag) {
+        List<ItemStack> loot = new ArrayList<>();
+        tag.getValue().forEach(compoundTag -> loot.add(parseItemStack(compoundTag)));
+        return () -> loot.get(ThreadLocalRandom.current().nextInt(loot.size()));
     }
 
     public static ItemStack parseItemStack(CompoundTag tag) {
@@ -69,11 +86,11 @@ public final class NBTHelper {
 
     public static <T extends Tag> T getChildTag(CompoundMap items, String key, Class<T> expected) throws IllegalArgumentException {
         if (!items.containsKey(key)) {
-            throw new IllegalArgumentException("NBT file is missing a \"" + key + "\" tag");
+            throw new IllegalArgumentException(String.format("NBT file is missing a \'%s\' tag!", key));
         }
         Tag tag = items.get(key);
         if (!expected.isInstance(tag)) {
-            throw new IllegalArgumentException(key + " tag is not of tag type " + expected.getName());
+            throw new IllegalArgumentException(String.format("\'%s\' tag is not of type \'%s\'", key, expected.getName()));
         }
         return expected.cast(tag);
     }

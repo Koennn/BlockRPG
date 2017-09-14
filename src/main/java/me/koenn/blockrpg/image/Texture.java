@@ -1,5 +1,7 @@
 package me.koenn.blockrpg.image;
 
+import net.dv8tion.jda.core.utils.SimpleLog;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 
@@ -9,6 +11,8 @@ import java.awt.image.BufferedImage;
  * Proprietary and confidential Written by Koen Willemse, August 2017
  */
 public class Texture {
+
+    private static final SimpleLog logger = SimpleLog.getLog("TextureLoader");
 
     private final String label;
     private int[][] pixels;
@@ -28,13 +32,16 @@ public class Texture {
 
     public Texture(String label, String fileName) {
         this.label = label;
-        BufferedImage image = null;
+        BufferedImage image;
         try {
             image = ImageIO.read(MapGenerator.class.getClassLoader().getResource(fileName));
         } catch (Exception e) {
+            logger.fatal(String.format("Error while loading texture \'%s\': %s", label, e));
             e.printStackTrace();
+            return;
         }
         if (image == null) {
+            logger.fatal(String.format("Error while loading texture \'%s\': %s", label, "Image can't be null!"));
             return;
         }
         this.pixels = new int[image.getWidth()][image.getHeight()];

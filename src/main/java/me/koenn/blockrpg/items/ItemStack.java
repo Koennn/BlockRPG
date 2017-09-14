@@ -47,7 +47,7 @@ public class ItemStack {
 
     public JSONObject getJson() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("type", this.type.getName());
+        jsonObject.put("type", this.type.getId());
         jsonObject.put("amount", this.amount);
         return jsonObject;
     }

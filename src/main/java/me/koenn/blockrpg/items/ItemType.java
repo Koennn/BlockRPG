@@ -47,7 +47,7 @@ public class ItemType {
 
     BASIC_SWORD(
             "Basic Sword", ":dagger:",
-            "A basic sword.\nAbilities:\n 1: Swing Sword\n 2: Block Attack",
+            "A basic weapon.\nAbilities:\n 1: Swing Sword\n 2: Block Attack",
             new IWeaponAction[]{new ActionSwingSword(), new ActionBlockAttack()}
     ),
 
@@ -64,26 +64,31 @@ public class ItemType {
     );*/
 
     private static final HashMap<String, ItemType> ITEMS = new HashMap<>();
+
+    private final String id;
     private final String name;
     private final String emote;
     private final String description;
     private IWeaponAction[] actions;
     private IItemAction IItemAction;
 
-    public ItemType(String name, String emote, String description) {
+    public ItemType(String id, String name, String emote, String description) {
+        this.id = id;
         this.name = name;
         this.emote = emote;
         this.description = description;
     }
 
-    public ItemType(String name, String emote, String description, IWeaponAction[] actions) {
+    public ItemType(String id, String name, String emote, String description, IWeaponAction[] actions) {
+        this.id = id;
         this.name = name;
         this.emote = emote;
         this.description = description;
         this.actions = actions;
     }
 
-    public ItemType(String name, String emote, String description, IItemAction IItemAction) {
+    public ItemType(String id, String name, String emote, String description, IItemAction IItemAction) {
+        this.id = id;
         this.name = name;
         this.emote = emote;
         this.description = description;
@@ -105,6 +110,10 @@ public class ItemType {
 
     public static ItemType getItem(String name) {
         return ITEMS.get(name.toLowerCase());
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getName() {

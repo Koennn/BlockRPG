@@ -31,10 +31,10 @@ public final class BlockRPG {
     private static ImageServer imageServer;
     private static SimpleLog logger;
     private static ThreadManager threadManager;
+    private final HashMap<Long, Battle> userBattles = new HashMap<>();
     private DiscordBot bot;
     private List<Stats> stats;
     private List<World> worlds;
-    private final HashMap<Long, Battle> userBattles = new HashMap<>();
 
     private BlockRPG(String token) {
         logger = SimpleLog.getLog("BlockRPG");
@@ -69,7 +69,7 @@ public final class BlockRPG {
             return;
         }
 
-        logger.info("Loading files...");
+        logger.info("Loading data files...");
         this.stats = FileLoader.loadStats(new File("stats.json"));
         this.worlds = FileLoader.loadWorlds(new File("worlds.json"));
 

@@ -17,8 +17,8 @@ public class Inventory {
 
     public Inventory() {
         this(new ArrayList<>());
-        //this.items.add(new ItemStack(ItemType.BASIC_SWORD));
-        //this.items.add(new ItemStack(ItemType.COOKIE, 12));
+        this.items.add(new ItemStack(ItemType.getItem("basic_sword")));
+        this.items.add(new ItemStack(ItemType.getItem("cookie"), 12));
     }
 
     public Inventory(JSONObject inventory) {
@@ -47,6 +47,9 @@ public class Inventory {
     }
 
     public void addItemStack(ItemStack itemStack) {
+        if (itemStack == null) {
+            return;
+        }
         if (this.hasItem(itemStack.getType())) {
             this.getItemStack(itemStack.getType()).add(itemStack.getAmount());
         }
@@ -69,6 +72,9 @@ public class Inventory {
     public String getFormattedString() {
         StringBuilder stringBuilder = new StringBuilder();
         for (ItemStack itemStack : this.items) {
+            if (itemStack == null || itemStack.getType() == null) {
+                continue;
+            }
             stringBuilder.append(String.format("%sx %s\n", itemStack.getAmount(), itemStack.toString()));
         }
         return stringBuilder.toString().trim();

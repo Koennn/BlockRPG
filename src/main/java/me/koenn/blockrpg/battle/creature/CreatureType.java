@@ -27,6 +27,7 @@ public class CreatureType {
     private final Texture texture;
     private final int health;
     private final LootTable lootTable;
+
     public CreatureType(String name, ItemStack weapon, Texture texture, int health, LootTable lootTable) {
         this.name = name;
         this.weapon = weapon;
