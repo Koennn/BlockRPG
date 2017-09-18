@@ -16,6 +16,9 @@ import java.net.URL;
  */
 public class BattleGenerator {
 
+    private static final Font FONT = new Font("Arial", Font.BOLD, 20);
+    private static final Color COLOR = Color.WHITE;
+
     private final Battle battle;
 
     public BattleGenerator(Battle battle) {
@@ -26,7 +29,7 @@ public class BattleGenerator {
         try {
             final HttpURLConnection connection = (HttpURLConnection) new URL(link).openConnection();
             connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.65 Safari/537.31");
-            return resize(ImageIO.read(connection.getInputStream()), 200, 200);
+            return resize(ImageIO.read(connection.getInputStream()), 128, 128);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -43,10 +46,17 @@ public class BattleGenerator {
     }
 
     public String generate() {
-        ImageGenerator generator = new ImageGenerator(800, 400);
+        ImageGenerator generator = new ImageGenerator(400, 400);
         Texture userAvatar = new Texture("userAvatar", readImage(this.battle.getUser().getEffectiveAvatarUrl()));
-        generator.draw(10, 10, userAvatar);
-        generator.draw(590, 10, battle.getOpponent().getType().getTexture());
+        generator.draw(10, 50, userAvatar);
+        generator.drawString(this.battle.getUser().getName(), FONT, COLOR, 10, 40);
+        generator.drawString(String.format("Health: %s", battle.getUserHealth()), FONT, COLOR, 10, 215);
+
+        Texture opponentTexture = this.battle.getOpponent().getType().getTexture();
+        generator.draw(250, 50, opponentTexture);
+        generator.drawString(this.battle.getOpponent().getType().getName(), FONT, COLOR, 250, 40);
+        generator.drawString(String.format("Health: %s", this.battle.getOpponent().getHealth()), FONT, COLOR, 250, 215);
+
         return generator.generate(battle.getUser());
     }
 }

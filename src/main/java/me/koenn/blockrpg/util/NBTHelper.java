@@ -3,12 +3,16 @@ package me.koenn.blockrpg.util;
 import com.flowpowered.nbt.*;
 import me.koenn.blockrpg.battle.creature.CreatureType;
 import me.koenn.blockrpg.battle.creature.LootTable;
+import me.koenn.blockrpg.image.BattleGenerator;
+import me.koenn.blockrpg.image.MapGenerator;
 import me.koenn.blockrpg.image.Texture;
 import me.koenn.blockrpg.items.IItemAction;
 import me.koenn.blockrpg.items.IWeaponAction;
 import me.koenn.blockrpg.items.ItemStack;
 import me.koenn.blockrpg.items.ItemType;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -69,7 +73,17 @@ public final class NBTHelper {
     public static Texture parseTexture(CompoundTag tag) {
         String texture = getChildTag(tag.getValue(), "texture", StringTag.class).getValue();
         String label = getChildTag(tag.getValue(), "label", StringTag.class).getValue();
-        return new Texture(label, texture);
+        BufferedImage image;
+        try {
+            image = ImageIO.read(MapGenerator.class.getClassLoader().getResource(texture));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        if (image == null) {
+            return null;
+        }
+        return new Texture(label, BattleGenerator.resize(image, 128, 128));
     }
 
     public static LootTable parseLoot(ListTag<CompoundTag> tag) {

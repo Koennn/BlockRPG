@@ -7,6 +7,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -21,13 +22,16 @@ import java.net.URLEncoder;
 public class ImageGenerator {
 
     private final BufferedImage result;
+    private final Graphics graphics;
 
     public ImageGenerator(int width, int height) {
         this.result = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        this.graphics = this.result.getGraphics();
     }
 
     public ImageGenerator(int width, int height, boolean alpha) {
         this.result = new BufferedImage(width, height, alpha ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB);
+        this.graphics = this.result.getGraphics();
     }
 
     public void draw(int x, int y, Texture texture) {
@@ -40,6 +44,12 @@ public class ImageGenerator {
                 this.result.setRGB(x + dx, y + dy, pixels[dx][dy]);
             }
         }
+    }
+
+    public void drawString(String string, Font font, Color color, int x, int y) {
+        this.graphics.setFont(font);
+        this.graphics.setColor(color);
+        this.graphics.drawString(string, x, y);
     }
 
     public String generate(User user) {

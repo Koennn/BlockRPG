@@ -3,6 +3,7 @@ package me.koenn.blockrpg.battle;
 import me.koenn.blockrpg.BlockRPG;
 import me.koenn.blockrpg.battle.creature.Creature;
 import me.koenn.blockrpg.commands.CommandManager;
+import me.koenn.blockrpg.image.BattleGenerator;
 import me.koenn.blockrpg.image.MapGenerator;
 import me.koenn.blockrpg.items.IWeaponAction;
 import me.koenn.blockrpg.items.Inventory;
@@ -68,6 +69,7 @@ public class Battle {
                 }
             }
         }
+        String image = new BattleGenerator(this).generate();
         return new MessageBuilder().setEmbed(new MessageEmbedImpl()
                 .setColor(Color.GREEN)
                 .setTitle("You encountered a **" + this.opponent.getType().getName() + "**")
@@ -77,6 +79,7 @@ public class Battle {
                         "**" + this.opponent.getType().getName() + "'s health:** " + this.opponent.getHealth() + "/" + this.opponent.getMaxHealth() + "\n\n" +
                         "**Your possible moves:**\n" + yourMoves.toString().trim()
                 )
+                .setImage(new MessageEmbed.ImageInfo(image, "", 800, 400))
                 .setFooter(new MessageEmbed.Footer("BlockRPG - BETA", "", ""))
                 .setFields(new ArrayList<>())
         ).build();
