@@ -69,7 +69,7 @@ public class Battle {
                 }
             }
         }
-        String image = new BattleGenerator(this).generate();
+        String image = new BattleGenerator(this).generate(true);
         return new MessageBuilder().setEmbed(new MessageEmbedImpl()
                 .setColor(Color.GREEN)
                 .setTitle("You encountered a **" + this.opponent.getType().getName() + "**")

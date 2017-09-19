@@ -28,7 +28,9 @@ public class MapGenerator {
     }
 
     public String generate(User owner, boolean clearCache) {
-        MapGenerator.cachedMaps.clearCache(owner);
+        if (clearCache) {
+            MapGenerator.cachedMaps.clearCache(owner);
+        }
         return this.generate(owner);
     }
 

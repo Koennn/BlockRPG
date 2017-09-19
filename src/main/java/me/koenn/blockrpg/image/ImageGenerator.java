@@ -1,6 +1,7 @@
 package me.koenn.blockrpg.image;
 
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+import me.koenn.blockrpg.BlockRPG;
 import net.dv8tion.jda.core.entities.User;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -21,17 +22,21 @@ import java.net.URLEncoder;
  */
 public class ImageGenerator {
 
+    public static final String ENCODING = "UTF-8";
+    public static final String FORMAT = "png";
+    public static final String ERROR = "https://i.imgur.com/rhcd3l7.png";
+
     private final BufferedImage result;
-    private final Graphics graphics;
+    private final Graphics2D graphics;
 
     public ImageGenerator(int width, int height) {
         this.result = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        this.graphics = this.result.getGraphics();
+        this.graphics = this.result.createGraphics();
     }
 
     public ImageGenerator(int width, int height, boolean alpha) {
         this.result = new BufferedImage(width, height, alpha ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB);
-        this.graphics = this.result.getGraphics();
+        this.graphics = this.result.createGraphics();
     }
 
     public void draw(int x, int y, Texture texture) {
@@ -52,24 +57,30 @@ public class ImageGenerator {
         this.graphics.drawString(string, x, y);
     }
 
+    public void drawBackground(Color color) {
+        for (int x = 0; x < this.result.getWidth(); x++) {
+            for (int y = 0; y < this.result.getHeight(); y++) {
+                this.result.setRGB(x, y, color.getRGB());
+            }
+        }
+    }
+
     public String generate(User user) {
         try {
-            return upload(this.result, user);
+            return uploadLocal(this.result, user);
         } catch (Exception e) {
             e.printStackTrace();
-            return "https://blog.sqlauthority.com/wp-content/uploads/2015/10/errorstop.png";
+            return ERROR;
         }
     }
 
     private String upload(BufferedImage image, User user) throws IOException, ParseException {
         ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
-        ImageIO.write(image, "png", byteArray);
-        byte[] byteImage = byteArray.toByteArray();
-        String dataImage = Base64.encode(byteImage);
-        String data = URLEncoder.encode("image", "UTF-8") + "=" + URLEncoder.encode(dataImage, "UTF-8");
+        ImageIO.write(image, FORMAT, byteArray);
+        String dataImage = Base64.encode(byteArray.toByteArray());
+        String data = URLEncoder.encode("image", ENCODING) + "=" + URLEncoder.encode(dataImage, ENCODING);
 
-        URL url = new URL("https://api.imgur.com/3/image");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        HttpURLConnection conn = (HttpURLConnection) new URL("https://api.imgur.com/3/image").openConnection();
 
         conn.setDoOutput(true);
         conn.setDoInput(true);
@@ -94,12 +105,19 @@ public class ImageGenerator {
         JSONParser parser = new JSONParser();
         JSONObject object = (JSONObject) parser.parse(stb.toString());
 
+        System.out.println(object.toJSONString());
+
+        if (!((boolean) object.get("success"))) {
+            BlockRPG.getLogger().fatal(String.format("Error while uploading image, received status code %s", object.get("status")));
+            return ERROR;
+        }
+
         return (String) ((JSONObject) object.get("data")).get("link");
     }
 
     private String uploadLocal(BufferedImage image, User user) throws IOException {
         ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
-        ImageIO.write(image, "png", byteArray);
+        ImageIO.write(image, FORMAT, byteArray);
         ImageServer.images.put(user.getIdLong(), byteArray.toByteArray());
         String url = String.format("http://play.blockgaming.org:8080/image?discordId=%s&id=%s", user.getIdLong(), ImageServer.id++);
         System.out.println(url);

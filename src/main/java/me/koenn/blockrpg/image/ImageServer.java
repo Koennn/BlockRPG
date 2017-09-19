@@ -69,7 +69,7 @@ public class ImageServer implements HttpHandler {
         }
 
         Headers headers = httpExchange.getResponseHeaders();
-        headers.add("Content-Type", "image/png");
+        headers.add("Content-Type", "image/" + ImageGenerator.FORMAT);
 
         httpExchange.sendResponseHeaders(200, data.length);
         OutputStream stream = httpExchange.getResponseBody();

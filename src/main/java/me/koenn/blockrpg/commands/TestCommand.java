@@ -36,7 +36,7 @@ public class TestCommand implements ICommand {
 
     @Override
     public Message execute(User executor, MessageChannel channel, String[] args) {
-        return new MessageBuilder().append(new BattleGenerator(BlockRPG.getInstance().getUserBattles().get(executor.getIdLong())).generate()).build();
+        return new MessageBuilder().append(new BattleGenerator(BlockRPG.getInstance().getUserBattles().get(executor.getIdLong())).generate(true)).build();
     }
 
     @Override
