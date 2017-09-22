@@ -71,6 +71,7 @@ public class BattleGenerator {
         generator.draw(10, 50, userAvatar);
         generator.drawString(this.battle.getUser().getName(), FONT, COLOR, 10, 40);
         generator.drawString(String.format("Health: %s", battle.getUserHealth()), FONT, COLOR, 10, 215);
+        generator.drawSquare(10, 50, 128, 128, Color.BLACK);
 
         //Texture opponentTexture = this.battle.getOpponent().getType().getTexture();
         generator.draw(250, 50, userAvatar /*TMP!*/);

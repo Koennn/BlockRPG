@@ -65,9 +65,19 @@ public class ImageGenerator {
         }
     }
 
+    public void drawSquare(int x, int y, int width, int height, Color color) {
+        for (int xi = x; xi < x + width; xi++) {
+            for (int yi = y; yi < y + height; yi++) {
+                if (yi == y || xi == x) {
+                    this.result.setRGB(xi, yi, color.getRGB());
+                }
+            }
+        }
+    }
+
     public String generate(User user) {
         try {
-            return uploadLocal(this.result, user);
+            return upload(this.result, user);
         } catch (Exception e) {
             e.printStackTrace();
             return ERROR;
@@ -118,8 +128,8 @@ public class ImageGenerator {
     private String uploadLocal(BufferedImage image, User user) throws IOException {
         ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
         ImageIO.write(image, FORMAT, byteArray);
-        ImageServer.images.put(user.getIdLong(), byteArray.toByteArray());
-        String url = String.format("http://play.blockgaming.org:8080/image?discordId=%s&id=%s", user.getIdLong(), ImageServer.id++);
+        int id = ImageServer.putImage(user.getIdLong(), byteArray.toByteArray());
+        String url = String.format("http://play.blockgaming.org:8080/image?discordId=%s&id=%s&session=%s", user.getIdLong(), id, ImageServer.SESSION);
         System.out.println(url);
         return url;
     }

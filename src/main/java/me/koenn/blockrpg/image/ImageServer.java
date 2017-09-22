@@ -10,16 +10,23 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ImageServer implements HttpHandler {
 
+    public static final String SESSION = UUID.randomUUID().toString();
     public static final HashMap<Long, byte[]> images = new HashMap<>();
-    public static int id;
+    public static final HashMap<Long, Integer> ids = new HashMap<>();
     public static HttpServer server;
+
+    public static int putImage(Long user, byte[] image) {
+        images.put(user, image);
+        if (!ids.containsKey(user)) {
+            ids.put(user, 0);
+        }
+        ids.put(user, ids.get(user) + 1);
+        return ids.get(user);
+    }
 
     public ImageServer() {
         try {
@@ -60,7 +67,15 @@ public class ImageServer implements HttpHandler {
     public void handle(HttpExchange httpExchange) throws IOException {
         Map<String, List<String>> params = getQueryParams(httpExchange.getRequestURI().toASCIIString());
 
-        byte[] data = images.get(Long.parseLong(params.get("discordId").get(0)));
+        long userId = Long.parseLong(params.get("discordId").get(0));
+        int id = Integer.parseInt(params.get("id").get(0));
+        byte[] data = images.get(userId);
+
+        if (id != ids.get(userId)) {
+            httpExchange.sendResponseHeaders(404, 0);
+            httpExchange.getResponseBody().close();
+            return;
+        }
 
         if (data == null) {
             httpExchange.sendResponseHeaders(404, 0);
@@ -76,8 +91,8 @@ public class ImageServer implements HttpHandler {
         stream.write(data, 0, data.length);
         stream.close();
 
-        if (id == Integer.MAX_VALUE) {
-            id = 0;
+        if (ids.get(userId) == Integer.MAX_VALUE) {
+            ids.put(userId, 0);
         }
     }
 }
