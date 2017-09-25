@@ -2,7 +2,6 @@ package me.koenn.blockrpg.battle;
 
 import me.koenn.blockrpg.BlockRPG;
 import me.koenn.blockrpg.battle.creature.Creature;
-import me.koenn.blockrpg.commands.CommandManager;
 import me.koenn.blockrpg.image.BattleGenerator;
 import me.koenn.blockrpg.image.MapGenerator;
 import me.koenn.blockrpg.items.IWeaponAction;
@@ -58,27 +57,21 @@ public class Battle {
     }
 
     public Message start() {
-        StringBuilder yourMoves = new StringBuilder();
         int index = 1;
         for (ItemStack item : ((Inventory) BlockRPG.getInstance().getStats(user).get("inventory")).getItems()) {
             if (item.getType().getActions() != null) {
                 for (IWeaponAction action : item.getType().getActions()) {
                     userMoves.put(index, action);
-                    yourMoves.append(String.format("`  %smove %s`: %s\n", CommandManager.CMD_CHAR, index, action.getActionName()));
                     index++;
                 }
             }
         }
+
         String image = new BattleGenerator(this).generate(true);
         return new MessageBuilder().setEmbed(new MessageEmbedImpl()
                 .setColor(Color.GREEN)
                 .setTitle("You encountered a **" + this.opponent.getType().getName() + "**")
                 .setAuthor(new MessageEmbed.AuthorInfo(this.user.getName(), this.user.getEffectiveAvatarUrl(), this.user.getEffectiveAvatarUrl(), ""))
-                .setDescription("" +
-                        "**Your health:** " + BlockRPG.getInstance().getStats(user).get("health") + "\n" +
-                        "**" + this.opponent.getType().getName() + "'s health:** " + this.opponent.getHealth() + "/" + this.opponent.getMaxHealth() + "\n\n" +
-                        "**Your possible moves:**\n" + yourMoves.toString().trim()
-                )
                 .setImage(new MessageEmbed.ImageInfo(image, "", 800, 400))
                 .setFooter(new MessageEmbed.Footer("BlockRPG - BETA", "", ""))
                 .setFields(new ArrayList<>())

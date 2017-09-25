@@ -1,8 +1,6 @@
 package me.koenn.blockrpg.commands;
 
 import me.koenn.blockrpg.BlockRPG;
-import me.koenn.blockrpg.image.BattleGenerator;
-import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
@@ -36,7 +34,7 @@ public class TestCommand implements ICommand {
 
     @Override
     public Message execute(User executor, MessageChannel channel, String[] args) {
-        return new MessageBuilder().append(new BattleGenerator(BlockRPG.getInstance().getUserBattles().get(executor.getIdLong())).generate(true)).build();
+        return BlockRPG.getInstance().getUserBattles().get(executor.getIdLong()).start();
     }
 
     @Override

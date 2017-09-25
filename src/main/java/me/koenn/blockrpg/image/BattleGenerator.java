@@ -24,7 +24,8 @@ public class BattleGenerator {
     public static final Cache<User, String> cachedBattles = new Cache<>();
 
     private static final Font FONT = new Font("Arial", Font.BOLD, 20);
-    private static final Color COLOR = Color.getColor("4286f4");
+    private static final Color COLOR = Color.BLACK;
+    private static final String IMAGE_API = "https://source.unsplash.com/collection/206153/400x400";
 
     private final Battle battle;
 
@@ -36,7 +37,7 @@ public class BattleGenerator {
         try {
             final HttpURLConnection connection = (HttpURLConnection) new URL(link).openConnection();
             connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.65 Safari/537.31");
-            return resize(ImageIO.read(connection.getInputStream()), 128, 128);
+            return ImageIO.read(connection.getInputStream());
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -56,33 +57,40 @@ public class BattleGenerator {
         if (clearCache) {
             cachedBattles.clearCache(this.battle.getUser());
         }
-        return this.generate();
+        try {
+            return this.generate();
+        } catch (IOException e) {
+            return ImageGenerator.ERROR;
+        }
     }
 
-    public String generate() {
+    public String generate() throws IOException {
         if (cachedBattles.isCached(this.battle.getUser())) {
             return cachedBattles.get(this.battle.getUser());
         }
 
-        ImageGenerator generator = new ImageGenerator(400, 400);
-        generator.drawBackground(Color.DARK_GRAY);
+        ImageGenerator generator = new ImageGenerator(410, 410);
 
-        Texture userAvatar = new Texture("userAvatar", readImage(this.battle.getUser().getEffectiveAvatarUrl()));
-        generator.draw(10, 50, userAvatar);
-        generator.drawString(this.battle.getUser().getName(), FONT, COLOR, 10, 40);
-        generator.drawString(String.format("Health: %s", battle.getUserHealth()), FONT, COLOR, 10, 215);
-        generator.drawSquare(10, 50, 128, 128, Color.BLACK);
+        generator.draw(5, 5, new Texture("background", "bg.png"));
 
-        //Texture opponentTexture = this.battle.getOpponent().getType().getTexture();
-        generator.draw(250, 50, userAvatar /*TMP!*/);
+        Texture userAvatar = new Texture("userAvatar", resize(readImage(this.battle.getUser().getEffectiveAvatarUrl()), 128, 128));
+        generator.drawSquare(15, 45, 138, 138, Color.BLACK);
+        generator.draw(20, 50, userAvatar);
+        generator.drawString(this.battle.getUser().getName(), FONT, COLOR, 20, 40);
+        generator.drawString(String.format("Health: %s", battle.getUserHealth()), FONT, COLOR, 20, 215);
+
+        Texture opponentTexture = this.battle.getOpponent().getType().getTexture();
+        generator.drawSquare(245, 45, 138, 138, Color.BLACK);
+        generator.draw(250, 50, opponentTexture);
         generator.drawString(this.battle.getOpponent().getType().getName(), FONT, COLOR, 250, 40);
         generator.drawString(String.format("Health: %s", this.battle.getOpponent().getHealth()), FONT, COLOR, 250, 215);
 
-        int y = 250;
+        generator.drawString("Your moves:", FONT, COLOR, 20, 250);
+        int y = 250 + FONT.getSize();
         LinkedHashMap<Integer, IWeaponAction> moves = this.battle.getUserMoves();
         for (int moveIndex : moves.keySet()) {
             String moveString = String.format("%smove %s: %s", CommandManager.CMD_CHAR, moveIndex, moves.get(moveIndex).getActionName());
-            generator.drawString(moveString, FONT, COLOR, 10, y);
+            generator.drawString(moveString, FONT, COLOR, 20, y);
             y += FONT.getSize();
             if (y + FONT.getSize() >= 400) {
                 break;

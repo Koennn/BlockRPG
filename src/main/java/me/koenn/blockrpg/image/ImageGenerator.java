@@ -66,13 +66,9 @@ public class ImageGenerator {
     }
 
     public void drawSquare(int x, int y, int width, int height, Color color) {
-        for (int xi = x; xi < x + width; xi++) {
-            for (int yi = y; yi < y + height; yi++) {
-                if (yi == y || xi == x) {
-                    this.result.setRGB(xi, yi, color.getRGB());
-                }
-            }
-        }
+        this.graphics.setColor(color);
+        this.graphics.fillRect(x, y, width, height);
+        this.graphics.setColor(Color.WHITE);
     }
 
     public String generate(User user) {
