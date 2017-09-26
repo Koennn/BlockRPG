@@ -22,12 +22,17 @@ import java.util.LinkedHashMap;
 public class BattleGenerator {
 
     public static final Cache<User, String> cachedBattles = new Cache<>();
+    public static final Cache<User, Texture> userAvatars = new Cache<>();
 
     private static final Font FONT = new Font("Arial", Font.BOLD, 20);
     private static final Color COLOR = Color.BLACK;
-    private static final String IMAGE_API = "https://source.unsplash.com/collection/206153/400x400";
+    private static Texture BACKGROUND;
 
     private final Battle battle;
+
+    public static void loadTextures() {
+        BACKGROUND = new Texture("background", "bg.png");
+    }
 
     public BattleGenerator(Battle battle) {
         this.battle = battle;
@@ -59,7 +64,7 @@ public class BattleGenerator {
         }
         try {
             return this.generate();
-        } catch (IOException e) {
+        } catch (Exception e) {
             return ImageGenerator.ERROR;
         }
     }
@@ -71,16 +76,20 @@ public class BattleGenerator {
 
         ImageGenerator generator = new ImageGenerator(410, 410);
 
-        generator.draw(5, 5, new Texture("background", "bg.png"));
+        generator.draw(5, 5, BACKGROUND);
 
-        Texture userAvatar = new Texture("userAvatar", resize(readImage(this.battle.getUser().getEffectiveAvatarUrl()), 128, 128));
-        generator.drawSquare(15, 45, 138, 138, Color.BLACK);
+        if (!userAvatars.isCached(this.battle.getUser())) {
+            userAvatars.put(this.battle.getUser(), new Texture(this.battle.getUser().getId(), resize(readImage(this.battle.getUser().getEffectiveAvatarUrl()), 128, 128)));
+        }
+
+        Texture userAvatar = userAvatars.get(this.battle.getUser());
+        generator.clearSquare(15, 45, 138, 138);
         generator.draw(20, 50, userAvatar);
         generator.drawString(this.battle.getUser().getName(), FONT, COLOR, 20, 40);
         generator.drawString(String.format("Health: %s", battle.getUserHealth()), FONT, COLOR, 20, 215);
 
         Texture opponentTexture = this.battle.getOpponent().getType().getTexture();
-        generator.drawSquare(245, 45, 138, 138, Color.BLACK);
+        generator.clearSquare(245, 45, 138, 138);
         generator.draw(250, 50, opponentTexture);
         generator.drawString(this.battle.getOpponent().getType().getName(), FONT, COLOR, 250, 40);
         generator.drawString(String.format("Health: %s", this.battle.getOpponent().getHealth()), FONT, COLOR, 250, 215);

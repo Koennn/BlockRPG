@@ -14,11 +14,11 @@ public class Texture {
 
     private static final SimpleLog logger = SimpleLog.getLog("TextureLoader");
 
-    private final String label;
+    private BufferedImage image;
     private int[][] pixels;
 
     public Texture(String label, BufferedImage image) {
-        this.label = label;
+        this.image = image;
         if (image == null) {
             return;
         }
@@ -28,35 +28,35 @@ public class Texture {
                 pixels[xPixel][yPixel] = image.getRGB(xPixel, yPixel);
             }
         }
+        logger.info(String.format("Successfully loaded texture \'%s\' from BufferedImage!", label));
     }
 
     public Texture(String label, String fileName) {
-        this.label = label;
-        BufferedImage image;
         try {
-            image = ImageIO.read(MapGenerator.class.getClassLoader().getResource(fileName));
+            this.image = ImageIO.read(MapGenerator.class.getClassLoader().getResource(fileName));
         } catch (Exception e) {
             logger.fatal(String.format("Error while loading texture \'%s\': %s", label, e));
             e.printStackTrace();
             return;
         }
-        if (image == null) {
+        if (this.image == null) {
             logger.fatal(String.format("Error while loading texture \'%s\': %s", label, "Image can't be null!"));
             return;
         }
-        this.pixels = new int[image.getWidth()][image.getHeight()];
-        for (int xPixel = 0; xPixel < image.getWidth(); xPixel++) {
-            for (int yPixel = 0; yPixel < image.getHeight(); yPixel++) {
-                pixels[xPixel][yPixel] = image.getRGB(xPixel, yPixel);
+        this.pixels = new int[this.image.getWidth()][this.image.getHeight()];
+        for (int xPixel = 0; xPixel < this.image.getWidth(); xPixel++) {
+            for (int yPixel = 0; yPixel < this.image.getHeight(); yPixel++) {
+                pixels[xPixel][yPixel] = this.image.getRGB(xPixel, yPixel);
             }
         }
-    }
-
-    public String getLabel() {
-        return label;
+        logger.info(String.format("Successfully loaded texture \'%s\' from \'%s\'!", label, fileName));
     }
 
     public int[][] getPixels() {
         return pixels;
+    }
+
+    public BufferedImage getImage() {
+        return image;
     }
 }

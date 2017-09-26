@@ -15,29 +15,36 @@ public class MapGenerator {
 
     public static final Cache<User, String> cachedMaps = new Cache<>();
 
-    private static final Texture HOME_TILE = new Texture("home_tile", "home_tile.png");
-    private static final Texture EXPLORED_TILE = new Texture("explored_tile", "explored_tile.png");
-    private static final Texture UNEXPLORED_TILE = new Texture("unexplored_tile", "unexplored_tile.png");
-    private static final Texture CURRENT_TILE = new Texture("current_tile", "current_tile.png");
+    private static Texture HOME_TILE;
+    private static Texture EXPLORED_TILE;
+    private static Texture UNEXPLORED_TILE;
+    private static Texture CURRENT_TILE;
     private final World world;
     private final Vector2 center;
+
+    public static void loadTextures() {
+        HOME_TILE = new Texture("home_tile", "home_tile.png");
+        EXPLORED_TILE = new Texture("explored_tile", "explored_tile.png");
+        UNEXPLORED_TILE = new Texture("unexplored_tile", "unexplored_tile.png");
+        CURRENT_TILE = new Texture("current_tile", "current_tile.png");
+    }
 
     public MapGenerator(World world, User owner) {
         this.world = world;
         this.center = WorldHelper.getUserLocation(owner);
     }
 
+    public String generate(User owner) {
+        return this.generate(owner, false);
+    }
+
     public String generate(User owner, boolean clearCache) {
         if (clearCache) {
             MapGenerator.cachedMaps.clearCache(owner);
-        }
-        return this.generate(owner);
-    }
-
-    public String generate(User owner) {
-        if (cachedMaps.isCached(owner)) {
+        } else if (cachedMaps.isCached(owner)) {
             return cachedMaps.get(owner);
         }
+
         ImageGenerator generator = new ImageGenerator(503, 503);
         int realX, realY = 3;
         for (int y = 0; y < 10; y++) {

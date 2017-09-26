@@ -88,7 +88,7 @@ public class CommandManager extends ListenerAdapter {
         addReaction(message, "check");
         BlockRPG.getLogger().info(String.format("User \'%s\' executed command \'%s\'", executor.getName(), command.getCommand()));
 
-        channel.sendTyping().queue(void1 -> {
+        BlockRPG.getThreadManager().createThread(String.format("%s-cmd-thread", executor.getId()), () -> channel.sendTyping().queue(void1 -> {
             Message response;
             boolean error = false;
             try {
@@ -108,6 +108,6 @@ public class CommandManager extends ListenerAdapter {
                     }
                 });
             }
-        });
+        }));
     }
 }

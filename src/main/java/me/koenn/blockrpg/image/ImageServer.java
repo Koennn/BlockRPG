@@ -19,15 +19,6 @@ public class ImageServer implements HttpHandler {
     public static final HashMap<Long, Integer> ids = new HashMap<>();
     public static HttpServer server;
 
-    public static int putImage(Long user, byte[] image) {
-        images.put(user, image);
-        if (!ids.containsKey(user)) {
-            ids.put(user, 0);
-        }
-        ids.put(user, ids.get(user) + 1);
-        return ids.get(user);
-    }
-
     public ImageServer() {
         try {
             server = HttpServer.create(new InetSocketAddress(8080), 0);
@@ -36,6 +27,15 @@ public class ImageServer implements HttpHandler {
         }
         server.createContext("/image", this);
         server.start();
+    }
+
+    public static int putImage(Long user, byte[] image) {
+        images.put(user, image);
+        if (!ids.containsKey(user)) {
+            ids.put(user, 0);
+        }
+        ids.put(user, ids.get(user) + 1);
+        return ids.get(user);
     }
 
     private static Map<String, List<String>> getQueryParams(String url) {
@@ -69,27 +69,29 @@ public class ImageServer implements HttpHandler {
 
         long userId = Long.parseLong(params.get("discordId").get(0));
         int id = Integer.parseInt(params.get("id").get(0));
-        byte[] data = images.get(userId);
+        String session = params.get("session").get(0);
 
-        if (id != ids.get(userId)) {
+        if (id != ids.get(userId) || !session.equals(SESSION)) {
             httpExchange.sendResponseHeaders(404, 0);
             httpExchange.getResponseBody().close();
             return;
         }
 
+        byte[] data = images.get(userId);
         if (data == null) {
-            httpExchange.sendResponseHeaders(404, 0);
+            httpExchange.sendResponseHeaders(500, 0);
             httpExchange.getResponseBody().close();
             return;
         }
 
         Headers headers = httpExchange.getResponseHeaders();
-        headers.add("Content-Type", "image/" + ImageGenerator.FORMAT);
+        headers.add("Content-Type", String.format("image/%s", ImageGenerator.FORMAT));
 
         httpExchange.sendResponseHeaders(200, data.length);
         OutputStream stream = httpExchange.getResponseBody();
         stream.write(data, 0, data.length);
         stream.close();
+        httpExchange.close();
 
         if (ids.get(userId) == Integer.MAX_VALUE) {
             ids.put(userId, 0);

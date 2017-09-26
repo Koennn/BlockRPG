@@ -25,17 +25,13 @@ public class ImageGenerator {
     public static final String ENCODING = "UTF-8";
     public static final String FORMAT = "png";
     public static final String ERROR = "https://i.imgur.com/rhcd3l7.png";
+    public static final String LOCAL_URL = "http://play.blockgaming.org:8080/image?discordId=%s&id=%s&session=%s";
 
     private final BufferedImage result;
     private final Graphics2D graphics;
 
     public ImageGenerator(int width, int height) {
         this.result = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        this.graphics = this.result.createGraphics();
-    }
-
-    public ImageGenerator(int width, int height, boolean alpha) {
-        this.result = new BufferedImage(width, height, alpha ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB);
         this.graphics = this.result.createGraphics();
     }
 
@@ -57,30 +53,20 @@ public class ImageGenerator {
         this.graphics.drawString(string, x, y);
     }
 
-    public void drawBackground(Color color) {
-        for (int x = 0; x < this.result.getWidth(); x++) {
-            for (int y = 0; y < this.result.getHeight(); y++) {
-                this.result.setRGB(x, y, color.getRGB());
-            }
-        }
-    }
-
-    public void drawSquare(int x, int y, int width, int height, Color color) {
-        this.graphics.setColor(color);
-        this.graphics.fillRect(x, y, width, height);
-        this.graphics.setColor(Color.WHITE);
+    public void clearSquare(int x, int y, int width, int height) {
+        this.graphics.clearRect(x, y, width, height);
     }
 
     public String generate(User user) {
         try {
-            return upload(this.result, user);
+            return BlockRPG.ENABLE_LOCAL_SERVER ? uploadLocal(this.result, user) : upload(this.result);
         } catch (Exception e) {
             e.printStackTrace();
             return ERROR;
         }
     }
 
-    private String upload(BufferedImage image, User user) throws IOException, ParseException {
+    private String upload(BufferedImage image) throws IOException, ParseException {
         ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
         ImageIO.write(image, FORMAT, byteArray);
         String dataImage = Base64.encode(byteArray.toByteArray());
@@ -111,8 +97,6 @@ public class ImageGenerator {
         JSONParser parser = new JSONParser();
         JSONObject object = (JSONObject) parser.parse(stb.toString());
 
-        System.out.println(object.toJSONString());
-
         if (!((boolean) object.get("success"))) {
             BlockRPG.getLogger().fatal(String.format("Error while uploading image, received status code %s", object.get("status")));
             return ERROR;
@@ -125,8 +109,6 @@ public class ImageGenerator {
         ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
         ImageIO.write(image, FORMAT, byteArray);
         int id = ImageServer.putImage(user.getIdLong(), byteArray.toByteArray());
-        String url = String.format("http://play.blockgaming.org:8080/image?discordId=%s&id=%s&session=%s", user.getIdLong(), id, ImageServer.SESSION);
-        System.out.println(url);
-        return url;
+        return String.format(LOCAL_URL, user.getIdLong(), id, ImageServer.SESSION);
     }
 }

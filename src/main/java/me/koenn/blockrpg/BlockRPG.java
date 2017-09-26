@@ -5,7 +5,9 @@ import me.koenn.blockrpg.battle.creature.CreatureType;
 import me.koenn.blockrpg.commands.CommandManager;
 import me.koenn.blockrpg.data.FileLoader;
 import me.koenn.blockrpg.data.Stats;
+import me.koenn.blockrpg.image.BattleGenerator;
 import me.koenn.blockrpg.image.ImageServer;
+import me.koenn.blockrpg.image.MapGenerator;
 import me.koenn.blockrpg.items.ItemType;
 import me.koenn.blockrpg.util.Autosaver;
 import me.koenn.blockrpg.util.Console;
@@ -26,6 +28,8 @@ import java.util.List;
  * Proprietary and confidential Written by Koen Willemse, June 2017
  */
 public final class BlockRPG {
+
+    public static final boolean ENABLE_LOCAL_SERVER = false;
 
     private static BlockRPG instance;
     private static ImageServer imageServer;
@@ -84,6 +88,9 @@ public final class BlockRPG {
 
         logger.info("Starting autosaver...");
         threadManager.createThread("autosaver", new Autosaver(), true);
+
+        MapGenerator.loadTextures();
+        BattleGenerator.loadTextures();
 
         logger.info("Successfully loaded BlockRPG!");
     }
@@ -157,5 +164,9 @@ public final class BlockRPG {
 
     public List<Stats> getStats() {
         return stats;
+    }
+
+    public static ThreadManager getThreadManager() {
+        return threadManager;
     }
 }

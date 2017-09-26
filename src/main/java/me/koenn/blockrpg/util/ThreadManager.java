@@ -38,8 +38,6 @@ public class ThreadManager implements Thread.UncaughtExceptionHandler {
 
         this.activeThreads.add(thread);
         thread.start();
-
-        this.logger.info(String.format("Created and loaded thread \'%s\'", name));
     }
 
     public void disable() {
