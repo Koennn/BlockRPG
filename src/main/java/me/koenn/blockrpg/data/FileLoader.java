@@ -1,6 +1,7 @@
 package me.koenn.blockrpg.data;
 
 import me.koenn.blockrpg.world.World;
+import net.dv8tion.jda.core.utils.SimpleLog;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -15,6 +16,8 @@ import java.util.List;
  */
 public final class FileLoader {
 
+    private static final SimpleLog LOGGER = SimpleLog.getLog("FileLoader");
+
     public static List<Stats> loadStats(File file) {
         final JSONManager jsonManager = new JSONManager(file.getName());
         if (!jsonManager.getBody().containsKey("stats")) {
@@ -27,6 +30,7 @@ public final class FileLoader {
             final long userId = (long) userStats.get("7userId");
             statsList.add(new Stats(userId, userStats));
         }
+        LOGGER.info(String.format("Loaded file \'%s\'", file.getName()));
         return statsList;
     }
 
@@ -47,6 +51,7 @@ public final class FileLoader {
         for (Object worldObject : worlds) {
             worldList.add(new World((JSONObject) worldObject));
         }
+        LOGGER.info(String.format("Loaded file \'%s\'", file.getName()));
         return worldList;
     }
 

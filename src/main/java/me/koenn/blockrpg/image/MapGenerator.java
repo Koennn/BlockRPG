@@ -22,16 +22,16 @@ public class MapGenerator {
     private final World world;
     private final Vector2 center;
 
+    public MapGenerator(World world, User owner) {
+        this.world = world;
+        this.center = WorldHelper.getUserLocation(owner);
+    }
+
     public static void loadTextures() {
         HOME_TILE = new Texture("home_tile", "home_tile.png");
         EXPLORED_TILE = new Texture("explored_tile", "explored_tile.png");
         UNEXPLORED_TILE = new Texture("unexplored_tile", "unexplored_tile.png");
         CURRENT_TILE = new Texture("current_tile", "current_tile.png");
-    }
-
-    public MapGenerator(World world, User owner) {
-        this.world = world;
-        this.center = WorldHelper.getUserLocation(owner);
     }
 
     public String generate(User owner) {

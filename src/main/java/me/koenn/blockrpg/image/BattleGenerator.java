@@ -30,12 +30,12 @@ public class BattleGenerator {
 
     private final Battle battle;
 
-    public static void loadTextures() {
-        BACKGROUND = new Texture("background", "bg.png");
-    }
-
     public BattleGenerator(Battle battle) {
         this.battle = battle;
+    }
+
+    public static void loadTextures() {
+        BACKGROUND = new Texture("background", "bg.png");
     }
 
     public static BufferedImage readImage(String link) {
@@ -69,7 +69,7 @@ public class BattleGenerator {
         }
     }
 
-    public String generate() throws IOException {
+    public String generate() {
         if (cachedBattles.isCached(this.battle.getUser())) {
             return cachedBattles.get(this.battle.getUser());
         }
@@ -79,7 +79,7 @@ public class BattleGenerator {
         generator.draw(5, 5, BACKGROUND);
 
         if (!userAvatars.isCached(this.battle.getUser())) {
-            userAvatars.put(this.battle.getUser(), new Texture(this.battle.getUser().getId(), resize(readImage(this.battle.getUser().getEffectiveAvatarUrl()), 128, 128)));
+            userAvatars.put(this.battle.getUser(), new Texture(this.battle.getUser().getId(), readImage(this.battle.getUser().getEffectiveAvatarUrl())).resize(128, 128));
         }
 
         Texture userAvatar = userAvatars.get(this.battle.getUser());

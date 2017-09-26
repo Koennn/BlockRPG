@@ -13,18 +13,18 @@ import java.io.File;
  */
 public class Autosaver implements Runnable {
 
-    private final SimpleLog logger = SimpleLog.getLog("Autosaver");
+    private static final SimpleLog LOGGER = SimpleLog.getLog("Autosaver");
 
     @Override
     public void run() {
         try {
             Thread.sleep(60000);
         } catch (InterruptedException e) {
-            this.logger.info("Autosaver interrupted!");
+            LOGGER.info("Autosaver interrupted!");
             return;
         }
 
-        this.logger.info("Saving stats and worlds...");
+        LOGGER.info("Saving stats and worlds...");
 
         BlockRPG instance = BlockRPG.getInstance();
         if (instance.getStats() != null) {

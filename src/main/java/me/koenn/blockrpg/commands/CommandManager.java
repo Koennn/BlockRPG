@@ -86,7 +86,7 @@ public class CommandManager extends ListenerAdapter {
         }
 
         addReaction(message, "check");
-        BlockRPG.getLogger().info(String.format("User \'%s\' executed command \'%s\'", executor.getName(), command.getCommand()));
+        BlockRPG.LOGGER.info(String.format("User \'%s\' executed command \'%s\'", executor.getName(), command.getCommand()));
 
         BlockRPG.getThreadManager().createThread(String.format("%s-cmd-thread", executor.getId()), () -> channel.sendTyping().queue(void1 -> {
             Message response;
@@ -95,7 +95,7 @@ public class CommandManager extends ListenerAdapter {
                 response = command.execute(executor, channel, args);
             } catch (Exception ex) {
                 response = new MessageBuilder().append(String.format("Error while executing command \'%s\': %s", command.getCommand(), ex)).build();
-                BlockRPG.getLogger().fatal(String.format("Error while executing command \'%s\': %s", command.getCommand(), ex));
+                BlockRPG.LOGGER.fatal(String.format("Error while executing command \'%s\': %s", command.getCommand(), ex));
                 ex.printStackTrace();
                 error = true;
             }

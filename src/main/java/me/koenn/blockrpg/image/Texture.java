@@ -3,6 +3,7 @@ package me.koenn.blockrpg.image;
 import net.dv8tion.jda.core.utils.SimpleLog;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
@@ -22,12 +23,7 @@ public class Texture {
         if (image == null) {
             return;
         }
-        this.pixels = new int[image.getWidth()][image.getHeight()];
-        for (int xPixel = 0; xPixel < image.getWidth(); xPixel++) {
-            for (int yPixel = 0; yPixel < image.getHeight(); yPixel++) {
-                pixels[xPixel][yPixel] = image.getRGB(xPixel, yPixel);
-            }
-        }
+        this.loadPixels();
         logger.info(String.format("Successfully loaded texture \'%s\' from BufferedImage!", label));
     }
 
@@ -43,13 +39,28 @@ public class Texture {
             logger.fatal(String.format("Error while loading texture \'%s\': %s", label, "Image can't be null!"));
             return;
         }
+        this.loadPixels();
+        logger.info(String.format("Successfully loaded texture \'%s\' from \'%s\'!", label, fileName));
+    }
+
+    public Texture resize(int newW, int newH) {
+        Image tmp = this.image.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
+        BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = dimg.createGraphics();
+        g2d.drawImage(tmp, 0, 0, null);
+        g2d.dispose();
+        this.image = dimg;
+        this.loadPixels();
+        return this;
+    }
+
+    private void loadPixels() {
         this.pixels = new int[this.image.getWidth()][this.image.getHeight()];
         for (int xPixel = 0; xPixel < this.image.getWidth(); xPixel++) {
             for (int yPixel = 0; yPixel < this.image.getHeight(); yPixel++) {
                 pixels[xPixel][yPixel] = this.image.getRGB(xPixel, yPixel);
             }
         }
-        logger.info(String.format("Successfully loaded texture \'%s\' from \'%s\'!", label, fileName));
     }
 
     public int[][] getPixels() {
@@ -57,6 +68,6 @@ public class Texture {
     }
 
     public BufferedImage getImage() {
-        return image;
+        return this.image;
     }
 }

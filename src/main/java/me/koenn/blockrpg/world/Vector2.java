@@ -7,8 +7,8 @@ package me.koenn.blockrpg.world;
  */
 public class Vector2 {
 
-    public int x;
-    public int y;
+    public final int x;
+    public final int y;
 
     public Vector2() {
         this.x = 0;

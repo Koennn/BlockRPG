@@ -1,5 +1,7 @@
 package me.koenn.blockrpg.util;
 
+import me.koenn.blockrpg.BlockRPG;
+
 import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -7,8 +9,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-
-import static me.koenn.blockrpg.BlockRPG.getLogger;
 
 /**
  * Utility class containing all kinds of useful reflection related methods. Do not create an instance of this class,
@@ -34,7 +34,7 @@ public final class ReflectionHelper {
         try {
             clazz = Class.forName(className);
         } catch (ClassNotFoundException e) {
-            getLogger().info("Failed to get class '" + className + "'");
+            BlockRPG.LOGGER.info("Failed to get class '" + className + "'");
             e.printStackTrace();
         }
         return clazz;
@@ -83,14 +83,14 @@ public final class ReflectionHelper {
             method = obj.getClass().getMethod(methodName, paramTypes);
             method.setAccessible(true);
         } catch (SecurityException | NoSuchMethodException e) {
-            getLogger().info("Failed to get method '" + methodName + "' in class '" + obj.getClass().getName() + "'");
+            BlockRPG.LOGGER.info("Failed to get method '" + methodName + "' in class '" + obj.getClass().getName() + "'");
             return null;
         }
         Object value;
         try {
             value = method.invoke(obj, parameters);
         } catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
-            getLogger().info("Failed to call method '" + methodName + "' in class '" + obj.getClass().getName() + "'");
+            BlockRPG.LOGGER.info("Failed to call method '" + methodName + "' in class '" + obj.getClass().getName() + "'");
             return null;
         }
         return value;
@@ -109,13 +109,13 @@ public final class ReflectionHelper {
             field = obj.getClass().getField(fieldName);
             field.setAccessible(true);
         } catch (NoSuchFieldException e) {
-            getLogger().info("Failed to get field '" + fieldName + "' in class '" + obj.getClass().getName() + "'");
+            BlockRPG.LOGGER.info("Failed to get field '" + fieldName + "' in class '" + obj.getClass().getName() + "'");
             return;
         }
         try {
             field.set(obj, value);
         } catch (IllegalAccessException e) {
-            getLogger().info("Failed to set field '" + fieldName + "' in class '" + obj.getClass().getName() + "'");
+            BlockRPG.LOGGER.info("Failed to set field '" + fieldName + "' in class '" + obj.getClass().getName() + "'");
         }
     }
 
@@ -132,13 +132,13 @@ public final class ReflectionHelper {
             field = obj.getClass().getField(fieldName);
             field.setAccessible(true);
         } catch (NoSuchFieldException e) {
-            getLogger().info("Failed to get field '" + fieldName + "' in class '" + obj.getClass().getName() + "'");
+            BlockRPG.LOGGER.info("Failed to get field '" + fieldName + "' in class '" + obj.getClass().getName() + "'");
             return null;
         }
         try {
             return field.get(obj);
         } catch (IllegalAccessException e) {
-            getLogger().info("Failed to get value of field '" + fieldName + "' in class '" + obj.getClass().getName() + "'");
+            BlockRPG.LOGGER.info("Failed to get value of field '" + fieldName + "' in class '" + obj.getClass().getName() + "'");
             return null;
         }
     }

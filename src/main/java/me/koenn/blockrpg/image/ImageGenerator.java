@@ -98,7 +98,7 @@ public class ImageGenerator {
         JSONObject object = (JSONObject) parser.parse(stb.toString());
 
         if (!((boolean) object.get("success"))) {
-            BlockRPG.getLogger().fatal(String.format("Error while uploading image, received status code %s", object.get("status")));
+            BlockRPG.LOGGER.fatal(String.format("Error while uploading image, received status code %s", object.get("status")));
             return ERROR;
         }
 

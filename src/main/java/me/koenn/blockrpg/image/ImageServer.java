@@ -12,22 +12,12 @@ import java.net.InetSocketAddress;
 import java.net.URLDecoder;
 import java.util.*;
 
-public class ImageServer implements HttpHandler {
+public class ImageServer implements Runnable, HttpHandler {
 
     public static final String SESSION = UUID.randomUUID().toString();
     public static final HashMap<Long, byte[]> images = new HashMap<>();
     public static final HashMap<Long, Integer> ids = new HashMap<>();
     public static HttpServer server;
-
-    public ImageServer() {
-        try {
-            server = HttpServer.create(new InetSocketAddress(8080), 0);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        server.createContext("/image", this);
-        server.start();
-    }
 
     public static int putImage(Long user, byte[] image) {
         images.put(user, image);
@@ -61,6 +51,17 @@ public class ImageServer implements HttpHandler {
         } catch (UnsupportedEncodingException ex) {
             throw new AssertionError(ex);
         }
+    }
+
+    @Override
+    public void run() {
+        try {
+            server = HttpServer.create(new InetSocketAddress(8080), 0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        server.createContext("/image", this);
+        server.start();
     }
 
     @Override

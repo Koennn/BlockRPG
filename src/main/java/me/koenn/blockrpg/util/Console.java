@@ -22,16 +22,16 @@ public class Console implements Runnable {
                 return;
             }
         } catch (IOException e) {
-            BlockRPG.getLogger().fatal("Error while reading console input: " + e);
+            BlockRPG.LOGGER.fatal("Error while reading console input: " + e);
         }
 
         switch (line) {
             case "exit":
-                BlockRPG.getLogger().info("Exit command received, exitting...");
+                BlockRPG.LOGGER.info("Exit command received, exitting...");
                 System.exit(0);
                 break;
             default:
-                BlockRPG.getLogger().warn(String.format("Unknown command \'%s\'", line));
+                BlockRPG.LOGGER.warn(String.format("Unknown command \'%s\'", line));
         }
     }
 }

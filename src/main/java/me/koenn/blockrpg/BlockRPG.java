@@ -30,10 +30,9 @@ import java.util.List;
 public final class BlockRPG {
 
     public static final boolean ENABLE_LOCAL_SERVER = false;
+    public static final SimpleLog LOGGER = SimpleLog.getLog("BlockRPG");
 
     private static BlockRPG instance;
-    private static ImageServer imageServer;
-    private static SimpleLog logger;
     private static ThreadManager threadManager;
     private final HashMap<Long, Battle> userBattles = new HashMap<>();
     private DiscordBot bot;
@@ -41,62 +40,59 @@ public final class BlockRPG {
     private List<World> worlds;
 
     private BlockRPG(String token) {
-        logger = SimpleLog.getLog("BlockRPG");
-        logger.info("Starting BlockRPG...");
+        LOGGER.info("Starting BlockRPG...");
         threadManager = new ThreadManager();
-
         Runtime.getRuntime().addShutdownHook(new Thread(this::exit, "shutdown-thread"));
 
-        logger.info("Loading JDA...");
+        LOGGER.info("Loading JDA...");
         try {
             this.bot = new DiscordBot(token);
-        } catch (LoginException | InterruptedException | RateLimitedException e) {
-            logger.fatal("Error while starting bot: " + e);
+        } catch (LoginException l) {
+            LOGGER.fatal("Unable to log in to Discord: " + l);
+            l.printStackTrace();
+            return;
+        } catch (InterruptedException | RateLimitedException e) {
+            LOGGER.fatal("Error while starting bot: " + e);
             e.printStackTrace();
+            return;
         }
-
         this.bot.addListener(new CommandManager());
 
-        logger.info("Loading commands...");
+        LOGGER.info("Loading commands...");
         CommandManager.registerCommands();
 
-        logger.info("Starting threads..");
-        threadManager.createThread("image-server", () -> imageServer = new ImageServer());
-        threadManager.createThread("console", new Console(), true);
-
-        logger.info("Loading items...");
+        LOGGER.info("Loading items...");
         try {
             ItemType.loadItemTypes(new File("data"));
         } catch (Exception e) {
-            logger.fatal("Error while loading items: " + e);
+            LOGGER.fatal("Error while loading items: " + e);
             e.printStackTrace();
             return;
         }
 
-        logger.info("Loading data files...");
-        this.stats = FileLoader.loadStats(new File("stats.json"));
-        this.worlds = FileLoader.loadWorlds(new File("worlds.json"));
-
-        logger.info("Loading creatures...");
+        LOGGER.info("Loading creatures...");
         try {
             CreatureType.loadCreatures(new File("data"));
         } catch (Exception e) {
-            logger.fatal("Error while loading creatures: " + e);
+            LOGGER.fatal("Error while loading creatures: " + e);
             e.printStackTrace();
             return;
         }
 
-        logger.info("Starting autosaver...");
-        threadManager.createThread("autosaver", new Autosaver(), true);
+        LOGGER.info("Loading data files...");
+        this.stats = FileLoader.loadStats(new File("stats.json"));
+        this.worlds = FileLoader.loadWorlds(new File("worlds.json"));
 
+        LOGGER.info("Loading textures...");
         MapGenerator.loadTextures();
         BattleGenerator.loadTextures();
 
-        logger.info("Successfully loaded BlockRPG!");
-    }
+        LOGGER.info("Starting threads..");
+        threadManager.createThread("image-server", new ImageServer());
+        threadManager.createThread("console", new Console(), true);
+        threadManager.createThread("autosaver", new Autosaver(), true);
 
-    public static SimpleLog getLogger() {
-        return logger;
+        LOGGER.info("Successfully loaded BlockRPG!");
     }
 
     public static BlockRPG getInstance() {
@@ -105,31 +101,39 @@ public final class BlockRPG {
 
     public static void main(String[] args) {
         if (args.length == 0) {
-            System.err.println("No token provided!");
+            LOGGER.fatal("No token provided!");
             return;
         }
 
         instance = new BlockRPG(args[0]);
     }
 
+    public static ThreadManager getThreadManager() {
+        return threadManager;
+    }
+
     private void exit() {
-        logger.info("Shutting down BlockRPG...");
+        LOGGER.info("Shutting down BlockRPG...");
         if (ImageServer.server != null) {
             ImageServer.server.stop(0);
         }
 
-        FileLoader.saveStats(new File("stats.json"), BlockRPG.getInstance().getStats());
-        FileLoader.saveWorlds(new File("worlds.json"), BlockRPG.getInstance().getWorlds());
+        try {
+            FileLoader.saveStats(new File("stats.json"), BlockRPG.getInstance().getStats());
+            FileLoader.saveWorlds(new File("worlds.json"), BlockRPG.getInstance().getWorlds());
+        } catch (Exception ex) {
+            LOGGER.warn("Failed to save files while shutting down!");
+        }
 
         if (bot != null && bot.getJda() != null) {
             bot.getJda().shutdown();
-        }
 
-        logger.info("Waiting for bot to disconnect");
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            logger.fatal("Shutdown thread got interrupted: " + e);
+            LOGGER.info("Waiting for bot to disconnect");
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                LOGGER.fatal("Shutdown thread got interrupted: " + e);
+            }
         }
 
         threadManager.disable();
@@ -164,9 +168,5 @@ public final class BlockRPG {
 
     public List<Stats> getStats() {
         return stats;
-    }
-
-    public static ThreadManager getThreadManager() {
-        return threadManager;
     }
 }
