@@ -1,6 +1,7 @@
 package me.koenn.blockrpg.util;
 
 import me.koenn.blockrpg.world.Tile;
+import me.koenn.blockrpg.world.TileType;
 import me.koenn.blockrpg.world.Vector2;
 import org.json.simple.JSONObject;
 
@@ -29,7 +30,11 @@ public final class JSONHelper {
         JSONObject properties = new JSONObject();
         HashMap<String, Object> tileProperties = tile.getProperties();
         for (String key : tileProperties.keySet()) {
-            properties.put(key, tileProperties.get(key));
+            if (tileProperties.get(key) instanceof TileType) {
+                properties.put(key, ((TileType) tileProperties.get(key)).getJSON());
+            } else {
+                properties.put(key, tileProperties.get(key));
+            }
         }
         json.put("properties", properties);
         return json;

@@ -2,12 +2,15 @@ package me.koenn.blockrpg.util;
 
 import me.koenn.blockrpg.BlockRPG;
 import me.koenn.blockrpg.data.FileLoader;
+import me.koenn.blockrpg.world.Tile;
 import me.koenn.blockrpg.world.Vector2;
+import me.koenn.blockrpg.world.Village;
 import me.koenn.blockrpg.world.World;
 import net.dv8tion.jda.core.entities.User;
 
 import java.io.File;
 import java.util.List;
+import java.util.Random;
 
 /**
  * <p>
@@ -45,5 +48,11 @@ public final class WorldHelper {
 
     public static void setUserLocation(User user, Vector2 location) {
         getWorld(user).setLocation(location);
+    }
+
+    public static void generateProperties(Tile tile, Random random) {
+        if (random.nextInt(10) == 1) {
+            tile.setProperty("village", new Village(random.nextInt(7)));
+        }
     }
 }

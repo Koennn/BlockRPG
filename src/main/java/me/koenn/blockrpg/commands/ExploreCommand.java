@@ -64,12 +64,13 @@ public class ExploreCommand implements ICommand {
             return new MessageBuilder().append("You already explored this tile! Use **\\travel** to get there.").build();
         }
 
-        Message battleMessage = world.getBattle(executor, channel, world.explore(moved));
+        Tile tile = world.explore(moved);
+
+        Message battleMessage = world.getBattle(executor, channel, tile);
         if (battleMessage != null) {
             return battleMessage;
         }
 
-        Tile tile = world.explore(moved);
         WorldHelper.setUserLocation(executor, tile.getLocation());
         MapGenerator.cachedMaps.clearCache(executor);
         String image = new MapGenerator(WorldHelper.getWorld(executor), executor).generate(executor);

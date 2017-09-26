@@ -1,6 +1,7 @@
 package me.koenn.blockrpg.world;
 
 import me.koenn.blockrpg.util.FancyString;
+import me.koenn.blockrpg.util.ReflectionHelper;
 import org.json.simple.JSONObject;
 
 import java.util.HashMap;
@@ -22,7 +23,14 @@ public class Tile {
     public Tile(Vector2 location, JSONObject properties) {
         this.location = location;
         for (Object key : properties.keySet()) {
-            this.properties.put((String) key, properties.get(key));
+            if (properties.get(key) instanceof JSONObject) {
+                JSONObject json = (JSONObject) properties.get(key);
+                TileType type = (TileType) ReflectionHelper.newInstance(ReflectionHelper.getClass((String) json.get("class")), null);
+                type.fromJSON(json);
+                this.properties.put((String) key, type);
+            } else {
+                this.properties.put((String) key, properties.get(key));
+            }
         }
     }
 
@@ -48,7 +56,11 @@ public class Tile {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("**Coordinates:** ").append(this.location).append("\n");
         for (String key : this.properties.keySet()) {
-            stringBuilder.append("**").append(new FancyString(key)).append(":** ").append(this.properties.get(key)).append("\n");
+            if (this.properties.get(key) instanceof TileType) {
+                stringBuilder.append("**").append(new FancyString(key)).append(":** \n").append(((TileType) this.properties.get(key)).getDisplay()).append("\n");
+            } else {
+                stringBuilder.append("**").append(new FancyString(key)).append(":** ").append(this.properties.get(key)).append("\n");
+            }
         }
         return stringBuilder.toString().trim();
     }

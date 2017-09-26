@@ -19,6 +19,7 @@ public class MapGenerator {
     private static Texture EXPLORED_TILE;
     private static Texture UNEXPLORED_TILE;
     private static Texture CURRENT_TILE;
+    private static Texture VILLAGE_TILE;
     private final World world;
     private final Vector2 center;
 
@@ -32,6 +33,7 @@ public class MapGenerator {
         EXPLORED_TILE = new Texture("explored_tile", "explored_tile.png");
         UNEXPLORED_TILE = new Texture("unexplored_tile", "unexplored_tile.png");
         CURRENT_TILE = new Texture("current_tile", "current_tile.png");
+        VILLAGE_TILE = new Texture("village_tile", "village_tile.png");
     }
 
     public String generate(User owner) {
@@ -72,12 +74,18 @@ public class MapGenerator {
     private Texture getTileTexture(Vector2 tile) {
         if (tile.equals(this.center)) {
             return CURRENT_TILE;
-        } else if (world.getTile(tile) != null && world.getTile(tile).getProperty("homeTile") != null) {
+        } else if (hasProperty(tile, "homeTile")) {
             return HOME_TILE;
+        } else if (hasProperty(tile, "village")) {
+            return VILLAGE_TILE;
         } else if (this.world.isExplored(tile)) {
             return EXPLORED_TILE;
         } else {
             return UNEXPLORED_TILE;
         }
+    }
+
+    private boolean hasProperty(Vector2 tile, String property) {
+        return world.getTile(tile) != null && world.getTile(tile).getProperty(property) != null;
     }
 }

@@ -6,6 +6,7 @@ import me.koenn.blockrpg.battle.creature.Creature;
 import me.koenn.blockrpg.battle.creature.CreatureType;
 import me.koenn.blockrpg.util.Chance;
 import me.koenn.blockrpg.util.JSONHelper;
+import me.koenn.blockrpg.util.WorldHelper;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
@@ -13,6 +14,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.util.HashMap;
+import java.util.Random;
 
 /**
  * <p>
@@ -23,6 +25,7 @@ public class World {
 
     private final long userId;
     private final HashMap<Vector2, Tile> tiles = new HashMap<>();
+    private final Random random = new Random();
     private Vector2 location;
 
     public World(long userId) {
@@ -49,6 +52,7 @@ public class World {
             return this.getTile(location);
         }
         Tile tile = new Tile(location);
+        WorldHelper.generateProperties(tile, this.random);
         this.tiles.put(location, tile);
         return tile;
     }
