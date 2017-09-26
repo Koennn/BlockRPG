@@ -2,10 +2,13 @@ package me.koenn.blockrpg.util;
 
 import me.koenn.blockrpg.BlockRPG;
 import me.koenn.blockrpg.data.FileLoader;
+import me.koenn.blockrpg.items.ItemStack;
+import me.koenn.blockrpg.items.ItemType;
 import me.koenn.blockrpg.world.Tile;
 import me.koenn.blockrpg.world.Vector2;
-import me.koenn.blockrpg.world.Village;
 import me.koenn.blockrpg.world.World;
+import me.koenn.blockrpg.world.village.Trade;
+import me.koenn.blockrpg.world.village.Village;
 import net.dv8tion.jda.core.entities.User;
 
 import java.io.File;
@@ -52,7 +55,15 @@ public final class WorldHelper {
 
     public static void generateProperties(Tile tile, Random random) {
         if (random.nextInt(10) == 1) {
-            tile.setProperty("village", new Village(random.nextInt(7)));
+            tile.setProperty("village", generateVillage(random));
         }
+    }
+
+    private static Village generateVillage(Random random) {
+        int inhabitants = random.nextInt(10);
+        Trade[] trades = new Trade[]{
+                new Trade(new ItemStack(ItemType.getItem("carrot"), 2), new ItemStack(ItemType.getItem("cookie")))
+        };
+        return new Village(inhabitants, trades);
     }
 }

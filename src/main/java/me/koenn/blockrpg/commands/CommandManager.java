@@ -37,6 +37,7 @@ public class CommandManager extends ListenerAdapter {
         COMMAND_REGISTRY.register(new TestCommand());
         COMMAND_REGISTRY.register(new UseCommand());
         COMMAND_REGISTRY.register(new InfoCommand());
+        COMMAND_REGISTRY.register(new TradeCommand());
     }
 
     private static void addReaction(Message message, String emote) {

@@ -54,6 +54,6 @@ public class ItemStack {
 
     @Override
     public String toString() {
-        return String.format("%s %s", this.type.getEmote(), this.type.getName());
+        return String.format("%s %s", this.type.getName(), this.type.getEmote());
     }
 }
