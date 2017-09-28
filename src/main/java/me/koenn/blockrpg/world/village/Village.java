@@ -1,12 +1,12 @@
 package me.koenn.blockrpg.world.village;
 
+import me.koenn.blockrpg.commands.CommandManager;
 import me.koenn.blockrpg.world.TileType;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.LinkedList;
 
 /**
  * <p>
@@ -16,7 +16,7 @@ import java.util.List;
 public class Village implements TileType {
 
     private int inhabitants;
-    private List<Trade> trades;
+    private LinkedList<Trade> trades;
 
     @SuppressWarnings("unused")
     public Village() {
@@ -24,7 +24,7 @@ public class Village implements TileType {
 
     public Village(int inhabitants, Trade[] trades) {
         this.inhabitants = inhabitants;
-        this.trades = new ArrayList<>();
+        this.trades = new LinkedList<>();
         Collections.addAll(this.trades, trades);
     }
 
@@ -39,9 +39,10 @@ public class Village implements TileType {
         builder.append("**------------------------------------**\n");
         builder.append(String.format("**Inhabitants:** %s\n**Trades:**\n", this.inhabitants));
         for (Trade trade : this.trades) {
-            builder.append(String.format(" - %s\n", trade.getDisplay()));
+            builder.append(String.format(" **%s)** %s\n", this.trades.indexOf(trade) + 1, trade.getDisplay()));
         }
         builder.append("**------------------------------------**\n");
+        builder.append(String.format("`Use %strade <id> to perform a trade.`", CommandManager.CMD_CHAR));
         return builder.toString();
     }
 
@@ -59,7 +60,11 @@ public class Village implements TileType {
     @Override
     public void fromJSON(JSONObject json) {
         this.inhabitants = Integer.parseInt(String.valueOf(json.get("inhabitants")));
-        this.trades = new ArrayList<>();
+        this.trades = new LinkedList<>();
         ((JSONArray) json.get("trades")).forEach(trade -> this.trades.add(new Trade((JSONObject) trade)));
+    }
+
+    public LinkedList<Trade> getTrades() {
+        return trades;
     }
 }

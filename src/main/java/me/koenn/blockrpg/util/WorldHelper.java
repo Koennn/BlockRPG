@@ -60,7 +60,7 @@ public final class WorldHelper {
     }
 
     private static Village generateVillage(Random random) {
-        int inhabitants = random.nextInt(10);
+        int inhabitants = random.nextInt(9) + 1;
         Trade[] trades = new Trade[]{
                 new Trade(new ItemStack(ItemType.getItem("carrot"), 2), new ItemStack(ItemType.getItem("cookie")))
         };

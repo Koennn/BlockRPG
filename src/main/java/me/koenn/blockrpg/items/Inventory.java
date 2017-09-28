@@ -52,6 +52,22 @@ public class Inventory {
         }
         if (this.hasItem(itemStack.getType())) {
             this.getItemStack(itemStack.getType()).add(itemStack.getAmount());
+        } else {
+            this.items.add(itemStack);
+        }
+    }
+
+    public void removeItemStack(ItemStack itemStack) {
+        if (itemStack == null) {
+            return;
+        }
+        if (!this.hasItem(itemStack.getType())) {
+            return;
+        }
+        ItemStack stack = this.getItemStack(itemStack.getType());
+        stack.setAmount(stack.getAmount() - itemStack.getAmount());
+        if (stack.getAmount() <= 0) {
+            this.items.remove(stack);
         }
     }
 
