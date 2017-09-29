@@ -22,7 +22,7 @@ public class MoveCommand implements ICommand {
 
     @Override
     public String getDescription() {
-        return "Use one of your offensive or defensive moves in a battle.";
+        return "Use one of your moves in a battle.";
     }
 
     @Override

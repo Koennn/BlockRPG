@@ -17,82 +17,32 @@ import java.util.HashMap;
  */
 public class ItemType {
 
-    /*TEST_ITEM(
-            "Test Item", ":x:",
-            "Item used for testing."
-    ),
-
-    COOKIE(
-            "Cookie", ":cookie:",
-            "MissChikoo's favorite.\nContains high quantities of chocolate\nRestores 10 hp when eaten.\nDo not feed to parrots.",
-            new FoodItemAction("Cookie", 10)
-    ),
-
-    LOLLIPOP(
-            "Lollipop", ":lollipop:",
-            "A sweet lollipop, nicely red and yellow.\nRestores 5 hp when eaten.\nMake sure to brush your teeth afterwards.",
-            new FoodItemAction("Cookie", 10)
-    ),
-
-    CARROT(
-            "Carrot", ":carrot:",
-            "A healthy orange carrot.\nRestores 10 hp and gives increased\nvision when eaten.",
-            new FoodItemAction("Cookie", 10)
-    ),
-
-    WATCH(
-            "Watch", ":watch:",
-            "An interesting device used to tell time.\nMight have other hidden functions,\nwho knows..."
-    ),
-
-    BASIC_SWORD(
-            "Basic Sword", ":dagger:",
-            "A basic weapon.\nAbilities:\n 1: Swing Sword\n 2: Block Attack",
-            new IWeaponAction[]{new ActionSwingSword(), new ActionBlockAttack()}
-    ),
-
-    KNIFE(
-            "Kitchen Knife", ":knife:",
-            "A sharp knife, stolen from the kitchen.\nAbilities:\n 1: Stab",
-            new IWeaponAction[]{}
-    ),
-
-    SHIELD(
-            "Shield", ":shield:",
-                    "A sturdy metal shield, used to block attacks.\nAbilities:\n 1: Block Attack",
-                    new IWeaponAction[]{}
-    );*/
-
     private static final HashMap<String, ItemType> ITEMS = new HashMap<>();
 
     private final String id;
     private final String name;
     private final String emote;
     private final String description;
+    private final int value;
     private IWeaponAction[] actions;
-    private IItemAction IItemAction;
+    private IItemAction itemAction;
 
-    public ItemType(String id, String name, String emote, String description) {
+    public ItemType(String id, String name, String emote, String description, int value) {
         this.id = id;
         this.name = name;
         this.emote = emote;
         this.description = description;
+        this.value = value;
     }
 
-    public ItemType(String id, String name, String emote, String description, IWeaponAction[] actions) {
-        this.id = id;
-        this.name = name;
-        this.emote = emote;
-        this.description = description;
+    public ItemType(String id, String name, String emote, String description, int value, IWeaponAction[] actions) {
+        this(id, name, emote, description, value);
         this.actions = actions;
     }
 
-    public ItemType(String id, String name, String emote, String description, IItemAction IItemAction) {
-        this.id = id;
-        this.name = name;
-        this.emote = emote;
-        this.description = description;
-        this.IItemAction = IItemAction;
+    public ItemType(String id, String name, String emote, String description, int value, IItemAction itemAction) {
+        this(id, name, emote, description, value);
+        this.itemAction = itemAction;
     }
 
     public static void loadItemTypes(File directory) throws IOException {
@@ -112,6 +62,10 @@ public class ItemType {
         return ITEMS.get(name.toLowerCase());
     }
 
+    public static HashMap<String, ItemType> getITEMS() {
+        return ITEMS;
+    }
+
     public String getId() {
         return id;
     }
@@ -124,19 +78,23 @@ public class ItemType {
         return emote;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
     public IWeaponAction[] getActions() {
         return actions;
     }
 
-    public IItemAction getIItemAction() {
-        return IItemAction;
+    public IItemAction getItemAction() {
+        return itemAction;
     }
 
     public boolean hasItemAction() {
-        return this.IItemAction != null;
-    }
-
-    public String getDescription() {
-        return description;
+        return this.itemAction != null;
     }
 }

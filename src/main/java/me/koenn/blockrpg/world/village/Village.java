@@ -52,7 +52,7 @@ public class Village implements TileType {
         json.put("class", this.getClass().getName());
         json.put("inhabitants", this.inhabitants);
         JSONArray trades = new JSONArray();
-        this.trades.forEach(trade -> trades.add(trade.getJSON()));
+        this.trades.forEach(trade -> trades.add(trade.toJSON()));
         json.put("trades", trades);
         return json;
     }

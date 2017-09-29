@@ -62,7 +62,7 @@ public class UseCommand implements ICommand {
             inventory.getItems().remove(stack);
         }
 
-        return type.getIItemAction().execute(executor, channel);
+        return type.getItemAction().execute(executor, channel);
     }
 
     @Override

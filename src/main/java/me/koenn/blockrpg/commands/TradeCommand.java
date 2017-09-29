@@ -12,12 +12,7 @@ import me.koenn.blockrpg.world.village.Village;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.entities.impl.MessageEmbedImpl;
-
-import java.awt.*;
-import java.util.ArrayList;
 
 /**
  * <p>
@@ -91,14 +86,11 @@ public class TradeCommand implements ICommand {
             inventory.removeItemStack(cost);
             inventory.addItemStack(offer);
 
-            return new MessageBuilder().setEmbed(new MessageEmbedImpl()
-                    .setColor(Color.GREEN)
-                    .setTitle("Inventory:")
-                    .setAuthor(new MessageEmbed.AuthorInfo(executor.getName(), "", executor.getEffectiveAvatarUrl(), ""))
-                    .setDescription(inventory.getFormattedString())
-                    .setFooter(new MessageEmbed.Footer("BlockRPG - BETA", "", ""))
-                    .setFields(new ArrayList<>())
-            ).build();
+            return new MessageBuilder().setEmbed(new RPGMessageEmbed(
+                    "Trade successful!",
+                    String.format("You traded %s!", trade.getDisplay().replace(trade.getDisplay().split(" ")[0], "")),
+                    executor
+            )).build();
         }
     }
 

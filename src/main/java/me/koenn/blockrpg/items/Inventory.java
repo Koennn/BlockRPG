@@ -1,5 +1,6 @@
 package me.koenn.blockrpg.items;
 
+import me.koenn.blockrpg.data.JSONConvertible;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -11,12 +12,14 @@ import java.util.List;
  * Copyright (C) Koenn - All Rights Reserved Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential Written by Koen Willemse, June 2017
  */
-public class Inventory {
+public class Inventory implements JSONConvertible {
 
     private final List<ItemStack> items;
 
     public Inventory() {
         this(new ArrayList<>());
+
+        //TODO: Move somewhere else?
         this.items.add(new ItemStack(ItemType.getItem("basic_sword")));
         this.items.add(new ItemStack(ItemType.getItem("cookie"), 12));
     }
@@ -53,7 +56,7 @@ public class Inventory {
         if (this.hasItem(itemStack.getType())) {
             this.getItemStack(itemStack.getType()).add(itemStack.getAmount());
         } else {
-            this.items.add(itemStack);
+            this.items.add(new ItemStack(itemStack));
         }
     }
 
@@ -75,11 +78,12 @@ public class Inventory {
         return items;
     }
 
-    public JSONObject getJson() {
+    @Override
+    public JSONObject toJSON() {
         JSONObject jsonObject = new JSONObject();
         JSONArray items = new JSONArray();
         for (ItemStack itemStack : this.items) {
-            items.add(itemStack.getJson());
+            items.add(itemStack.toJSON());
         }
         jsonObject.put("items", items);
         return jsonObject;

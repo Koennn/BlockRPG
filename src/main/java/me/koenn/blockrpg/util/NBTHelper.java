@@ -32,14 +32,15 @@ public final class NBTHelper {
         String emote = getChildTag(tag.getValue(), "emote", StringTag.class).getValue();
         String description = getChildTag(tag.getValue(), "description", StringTag.class).getValue();
         String actionType = getChildTag(tag.getValue(), "action_type", StringTag.class).getValue();
+        int value = getChildTag(tag.getValue(), "value", IntTag.class).getValue();
 
         switch (actionType) {
             case "item":
-                return new ItemType(tag.getName(), name, emote, description, parseItemAction(getChildTag(tag.getValue(), "action", CompoundTag.class)));
+                return new ItemType(tag.getName(), name, emote, description, value, parseItemAction(getChildTag(tag.getValue(), "action", CompoundTag.class)));
             case "weapon":
-                return new ItemType(tag.getName(), name, emote, description, parseWeaponActions(getChildTag(tag.getValue(), "actions", ListTag.class)));
+                return new ItemType(tag.getName(), name, emote, description, value, parseWeaponActions(getChildTag(tag.getValue(), "actions", ListTag.class)));
             default:
-                return new ItemType(tag.getName(), name, emote, description);
+                return new ItemType(tag.getName(), name, emote, description, value);
         }
     }
 

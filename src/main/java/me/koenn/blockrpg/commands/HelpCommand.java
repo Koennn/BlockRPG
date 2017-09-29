@@ -41,7 +41,7 @@ public class HelpCommand implements ICommand {
                 continue;
             }
             stringBuilder.append(String.format(
-                    "**`%s%s`**\n%s\n\n",
+                    "**- `%s%s`** %s\n",
                     CommandManager.CMD_CHAR,
                     command.getCommand(),
                     command.getDescription()

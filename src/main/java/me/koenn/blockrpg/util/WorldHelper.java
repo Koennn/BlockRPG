@@ -2,8 +2,6 @@ package me.koenn.blockrpg.util;
 
 import me.koenn.blockrpg.BlockRPG;
 import me.koenn.blockrpg.data.FileLoader;
-import me.koenn.blockrpg.items.ItemStack;
-import me.koenn.blockrpg.items.ItemType;
 import me.koenn.blockrpg.world.Tile;
 import me.koenn.blockrpg.world.Vector2;
 import me.koenn.blockrpg.world.World;
@@ -12,8 +10,10 @@ import me.koenn.blockrpg.world.village.Village;
 import net.dv8tion.jda.core.entities.User;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * <p>
@@ -61,9 +61,13 @@ public final class WorldHelper {
 
     private static Village generateVillage(Random random) {
         int inhabitants = random.nextInt(9) + 1;
-        Trade[] trades = new Trade[]{
-                new Trade(new ItemStack(ItemType.getItem("carrot"), 2), new ItemStack(ItemType.getItem("cookie")))
-        };
-        return new Village(inhabitants, trades);
+        List<Trade> trades = new ArrayList<>();
+        for (int i = 0; i < inhabitants; i++) {
+            trades.add(new Trade(ThreadLocalRandom.current().nextInt(6, 100)));
+            if (ThreadLocalRandom.current().nextBoolean()) {
+                break;
+            }
+        }
+        return new Village(inhabitants, trades.toArray(new Trade[trades.size()]));
     }
 }

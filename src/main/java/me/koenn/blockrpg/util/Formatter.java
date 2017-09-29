@@ -43,9 +43,9 @@ public final class Formatter {
             return "null";
         }
         if (object instanceof Inventory) {
-            return ((Inventory) object).getJson();
+            return ((Inventory) object).toJSON();
         } else if (object instanceof ItemStack) {
-            return ((ItemStack) object).getJson();
+            return ((ItemStack) object).toJSON();
         } else if (object instanceof SkillPoints) {
             return ((SkillPoints) object).getJson();
         } else {
