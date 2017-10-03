@@ -36,6 +36,11 @@ public class ImageGenerator {
         this.graphics = this.result.createGraphics();
     }
 
+    public ImageGenerator(int width, int height, int imageType) {
+        this.result = new BufferedImage(width, height, imageType);
+        this.graphics = this.result.createGraphics();
+    }
+
     public void draw(int x, int y, Texture texture) {
         int[][] pixels = texture.getPixels();
         for (int dx = 0; dx < pixels.length; dx++) {

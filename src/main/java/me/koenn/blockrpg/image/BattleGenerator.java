@@ -74,9 +74,7 @@ public class BattleGenerator {
             return cachedBattles.get(this.battle.getUser());
         }
 
-        ImageGenerator generator = new ImageGenerator(410, 410);
-
-        generator.draw(5, 5, BACKGROUND);
+        ImageGenerator generator = new ImageGenerator(410, 410, BufferedImage.TYPE_INT_ARGB);
 
         if (!userAvatars.isCached(this.battle.getUser())) {
             userAvatars.put(this.battle.getUser(), new Texture(this.battle.getUser().getId(), readImage(this.battle.getUser().getEffectiveAvatarUrl())).resize(128, 128));
@@ -101,7 +99,7 @@ public class BattleGenerator {
             String moveString = String.format("%smove %s: %s", CommandManager.CMD_CHAR, moveIndex, moves.get(moveIndex).getActionName());
             generator.drawString(moveString, FONT, COLOR, 20, y);
             y += FONT.getSize();
-            if (y + FONT.getSize() >= 400) {
+            if (y + FONT.getSize() >= 410) {
                 break;
             }
         }

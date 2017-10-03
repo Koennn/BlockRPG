@@ -5,6 +5,7 @@ import me.koenn.blockrpg.data.FileLoader;
 import me.koenn.blockrpg.world.Tile;
 import me.koenn.blockrpg.world.Vector2;
 import me.koenn.blockrpg.world.World;
+import me.koenn.blockrpg.world.mine.Mine;
 import me.koenn.blockrpg.world.village.Trade;
 import me.koenn.blockrpg.world.village.Village;
 import net.dv8tion.jda.core.entities.User;
@@ -54,9 +55,10 @@ public final class WorldHelper {
     }
 
     public static void generateProperties(Tile tile, Random random) {
-        if (random.nextInt(10) == 1) {
+        tile.setProperty("mine", generateMine(random));
+        /*if (random.nextInt(10) == 1) {
             tile.setProperty("village", generateVillage(random));
-        }
+        }*/
     }
 
     private static Village generateVillage(Random random) {
@@ -69,5 +71,9 @@ public final class WorldHelper {
             }
         }
         return new Village(inhabitants, trades.toArray(new Trade[trades.size()]));
+    }
+
+    private static Mine generateMine(Random random) {
+        return new Mine();
     }
 }
