@@ -7,6 +7,7 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
 
+@SuppressWarnings("unused")
 public class FoodItemAction implements IItemAction {
 
     private final String type;
@@ -25,5 +26,10 @@ public class FoodItemAction implements IItemAction {
                 String.format("**Restored %s health**\n**Your health:** %s", this.restoreAmount, HealthHelper.getHealth(executor)),
                 executor)
         ).build();
+    }
+
+    @Override
+    public boolean shouldRemoveItem() {
+        return true;
     }
 }

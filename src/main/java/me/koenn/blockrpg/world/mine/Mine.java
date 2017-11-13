@@ -6,8 +6,6 @@ import me.koenn.blockrpg.items.ItemType;
 import me.koenn.blockrpg.world.TileType;
 import org.json.simple.JSONObject;
 
-import java.util.HashMap;
-
 /**
  * <p>
  * Copyright (C) Koenn - All Rights Reserved Unauthorized copying of this file, via any medium is strictly prohibited
@@ -15,10 +13,15 @@ import java.util.HashMap;
  */
 public class Mine implements TileType {
 
-    private final HashMap<ItemType, Integer> availableResources = new HashMap<>();
+    private ItemType resource;
+    private int amount;
 
     public Mine() {
-        this.availableResources.put(ItemType.getItem("diamond"), 12);
+    }
+
+    public Mine(ItemType resource, int amount) {
+        this.resource = resource;
+        this.amount = amount;
     }
 
     @Override
@@ -28,34 +31,37 @@ public class Mine implements TileType {
 
     @Override
     public String getDisplay() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("**------------------------------------**\n");
-        int index = 1;
-        for (ItemType type : this.availableResources.keySet()) {
-            builder.append(String.format(" **%s)** %sx %s\n", index++, this.availableResources.get(type), new ItemStack(type)));
-        }
-        builder.append("**------------------------------------**\n");
-        builder.append(String.format("`Use %smine <id> to start mining a resource.`", CommandManager.CMD_CHAR));
-        return builder.toString();
+        return "**------------------------------------**\n" +
+                String.format(" %sx %s\n", this.amount, new ItemStack(this.resource)) +
+                "**------------------------------------**\n" +
+                String.format("`Use %suse pickaxe to mine a resource.`", CommandManager.CMD_CHAR);
     }
 
     @Override
     public JSONObject getJSON() {
         JSONObject json = new JSONObject();
         json.put("class", this.getClass().getName());
-        JSONObject resources = new JSONObject();
-        for (ItemType type : this.availableResources.keySet()) {
-            resources.put(type.getId(), this.availableResources.get(type));
-        }
-        json.put("resources", resources);
+        json.put("resource", this.resource.getId());
+        json.put("amount", this.amount);
         return json;
     }
 
     @Override
     public void fromJSON(JSONObject json) {
-        JSONObject resources = (JSONObject) json.get("resources");
-        for (Object key : resources.keySet()) {
-            this.availableResources.put(ItemType.getItem((String) key), Integer.parseInt(String.valueOf(resources.get(key))));
-        }
+        this.resource = ItemType.getItem((String) json.get("resource"));
+        this.amount = Integer.parseInt(String.valueOf(json.get("amount")));
+    }
+
+    public ItemType getResource() {
+        return resource;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public ItemStack mine(int amount) {
+        this.amount -= amount;
+        return new ItemStack(this.resource, amount);
     }
 }

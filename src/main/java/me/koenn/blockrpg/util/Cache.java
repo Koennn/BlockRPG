@@ -9,7 +9,11 @@ import java.util.HashMap;
  */
 public class Cache<K, V> {
 
-    private final HashMap<K, V> data = new HashMap<>();
+    private final HashMap<K, V> data;
+
+    public Cache() {
+        this.data = new HashMap<>();
+    }
 
     public void put(K key, V value) {
         this.data.put(key, value);

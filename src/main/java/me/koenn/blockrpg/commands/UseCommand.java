@@ -56,10 +56,12 @@ public class UseCommand implements ICommand {
             return new MessageBuilder().setEmbed(new RPGMessageEmbed(String.format("You cant use a %s", type.getName()), "", executor)).build();
         }
 
-        ItemStack stack = inventory.getItemStack(type);
-        stack.setAmount(stack.getAmount() - 1);
-        if (stack.getAmount() <= 0) {
-            inventory.getItems().remove(stack);
+        if (type.getItemAction().shouldRemoveItem()) {
+            ItemStack stack = inventory.getItemStack(type);
+            stack.setAmount(stack.getAmount() - 1);
+            if (stack.getAmount() <= 0) {
+                inventory.getItems().remove(stack);
+            }
         }
 
         return type.getItemAction().execute(executor, channel);

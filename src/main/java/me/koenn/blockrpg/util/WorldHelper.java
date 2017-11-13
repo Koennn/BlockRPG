@@ -2,6 +2,7 @@ package me.koenn.blockrpg.util;
 
 import me.koenn.blockrpg.BlockRPG;
 import me.koenn.blockrpg.data.FileLoader;
+import me.koenn.blockrpg.items.ItemType;
 import me.koenn.blockrpg.world.Tile;
 import me.koenn.blockrpg.world.Vector2;
 import me.koenn.blockrpg.world.World;
@@ -55,10 +56,16 @@ public final class WorldHelper {
     }
 
     public static void generateProperties(Tile tile, Random random) {
-        tile.setProperty("mine", generateMine(random));
-        /*if (random.nextInt(10) == 1) {
-            tile.setProperty("village", generateVillage(random));
+        int rand = random.nextInt(10);
+        /*switch (rand) {
+            case 0:
+                tile.setProperty("mine", generateMine(random));
+                break;
+            case 1:
+                tile.setProperty("village", generateVillage(random));
+                break;
         }*/
+        tile.setProperty("mine", generateMine(random));
     }
 
     private static Village generateVillage(Random random) {
@@ -74,6 +81,6 @@ public final class WorldHelper {
     }
 
     private static Mine generateMine(Random random) {
-        return new Mine();
+        return new Mine(ItemType.getItem("diamond"), random.nextInt(11) + 1);
     }
 }

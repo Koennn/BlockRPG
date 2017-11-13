@@ -36,8 +36,8 @@ public class ThreadManager implements Thread.UncaughtExceptionHandler {
         thread.setUncaughtExceptionHandler(this);
         thread.setName(name);
 
-        this.activeThreads.add(thread);
         thread.start();
+        this.activeThreads.add(thread);
     }
 
     public void disable() {
