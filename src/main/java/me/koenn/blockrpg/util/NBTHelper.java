@@ -24,7 +24,7 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public final class NBTHelper {
 
-    private static final String ITEM_ACTION_PACKAGE = "me.koenn.blockrpg.items.";
+    private static final String ITEM_ACTION_PACKAGE = "me.koenn.blockrpg.items.itemaction.";
     private static final String WEAPON_ACTION_PACKAGE = "me.koenn.blockrpg.items.weapon.";
 
     public static ItemType parseItem(CompoundTag tag) {

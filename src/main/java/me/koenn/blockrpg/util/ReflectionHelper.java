@@ -10,25 +10,12 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Utility class containing all kinds of useful reflection related methods. Do not create an instance of this class,
- * only static methods need to be called.
- * <p>
- * Copyright (C) Koenn - All Rights Reserved Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential Written by Koen Willemse, May 2017
- */
 @SuppressWarnings("unused")
 public final class ReflectionHelper {
 
     private ReflectionHelper() {
     }
 
-    /**
-     * Get a <code>Class</code> object of the specified class name.
-     *
-     * @param className Name of the class you want to get
-     * @return Class object
-     */
     public static Class getClass(String className) {
         Class clazz = null;
         try {
@@ -40,13 +27,6 @@ public final class ReflectionHelper {
         return clazz;
     }
 
-    /**
-     * Create a new instance of a <code>Class</code> with specified arguments.
-     *
-     * @param clazz Class to instantiate
-     * @param args  Constructor arguments
-     * @return Instance of specified class
-     */
     public static Object newInstance(Class clazz, @Nullable Object[] args) {
         try {
             if (args == null || args.length == 0) {
@@ -65,14 +45,6 @@ public final class ReflectionHelper {
         }
     }
 
-    /**
-     * Call a method by name in a certain object instance with specified parameters.
-     *
-     * @param obj        Object instance to call the method in
-     * @param methodName Name of the method to call
-     * @param parameters Parameters for the method
-     * @return Method return value
-     */
     public static Object callMethod(Object obj, String methodName, Object... parameters) {
         Class<?>[] paramTypes = new Class[parameters.length];
         for (int i = 0; i < parameters.length; i++) {
@@ -96,13 +68,6 @@ public final class ReflectionHelper {
         return value;
     }
 
-    /**
-     * Set a field by name in a certain object instance.
-     *
-     * @param obj       Object instance to set the field in
-     * @param fieldName Name of the field to set
-     * @param value     Value to set the field to
-     */
     public static void setField(Object obj, String fieldName, Object value) {
         Field field;
         try {
@@ -119,13 +84,6 @@ public final class ReflectionHelper {
         }
     }
 
-    /**
-     * Get a field's value by name in a certain object instance.
-     *
-     * @param obj       Object instance to get the field from
-     * @param fieldName Name of the field
-     * @return Value of the field
-     */
     public static Object getField(Object obj, String fieldName) {
         Field field;
         try {

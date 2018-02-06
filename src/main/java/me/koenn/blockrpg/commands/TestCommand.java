@@ -1,15 +1,10 @@
 package me.koenn.blockrpg.commands;
 
-import me.koenn.blockrpg.world.village.Trade;
-import me.koenn.blockrpg.world.village.Village;
-import net.dv8tion.jda.core.MessageBuilder;
+import me.koenn.blockrpg.BlockRPG;
+import me.koenn.blockrpg.battle.Battle;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * <p>
@@ -40,14 +35,8 @@ public class TestCommand implements ICommand {
 
     @Override
     public Message execute(User executor, MessageChannel channel, String[] args) {
-        List<Trade> trades = new ArrayList<>();
-        for (int i = 0; i < 6; i++) {
-            trades.add(new Trade(ThreadLocalRandom.current().nextInt(6, 100)));
-            if (ThreadLocalRandom.current().nextBoolean()) {
-                break;
-            }
-        }
-        return new MessageBuilder().append(new Village(6, trades.toArray(new Trade[trades.size()])).getDisplay()).build();
+        Battle battle = BlockRPG.getInstance().getUserBattles().get(executor.getIdLong());
+        return battle.start();
     }
 
     @Override

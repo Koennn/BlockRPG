@@ -5,13 +5,13 @@ import me.koenn.blockrpg.battle.creature.CreatureType;
 import me.koenn.blockrpg.commands.CommandManager;
 import me.koenn.blockrpg.data.FileLoader;
 import me.koenn.blockrpg.data.Stats;
-import me.koenn.blockrpg.image.BattleGenerator;
 import me.koenn.blockrpg.image.ImageServer;
 import me.koenn.blockrpg.image.MapGenerator;
 import me.koenn.blockrpg.items.ItemType;
 import me.koenn.blockrpg.util.Autosaver;
 import me.koenn.blockrpg.util.Console;
 import me.koenn.blockrpg.util.ThreadManager;
+import me.koenn.blockrpg.util.TimeMeasurer;
 import me.koenn.blockrpg.world.World;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
@@ -41,6 +41,7 @@ public final class BlockRPG {
 
     private BlockRPG(String token) {
         LOGGER.info("Starting BlockRPG...");
+        TimeMeasurer timeMeasurer = new TimeMeasurer().start();
         threadManager = new ThreadManager();
         Runtime.getRuntime().addShutdownHook(new Thread(this::exit, "shutdown-thread"));
 
@@ -51,9 +52,13 @@ public final class BlockRPG {
             LOGGER.fatal("Unable to log in to Discord: " + l);
             l.printStackTrace();
             return;
-        } catch (InterruptedException | RateLimitedException e) {
-            LOGGER.fatal("Error while starting bot: " + e);
-            e.printStackTrace();
+        } catch (InterruptedException i) {
+            LOGGER.fatal("Interrupted while starting bot: " + i);
+            i.printStackTrace();
+            return;
+        } catch (RateLimitedException r) {
+            LOGGER.fatal("Rate-limited by Discord, hold on!");
+            main(new String[]{token});
             return;
         }
         this.bot.addListener(new CommandManager());
@@ -85,14 +90,15 @@ public final class BlockRPG {
 
         LOGGER.info("Loading textures...");
         MapGenerator.loadTextures();
-        BattleGenerator.loadTextures();
 
         LOGGER.info("Starting threads..");
         threadManager.createThread("image-server", new ImageServer());
         threadManager.createThread("console", new Console(), true);
         threadManager.createThread("autosaver", new Autosaver(), true);
+        threadManager.createThread("timer", new TimeMeasurer.TimerThread(), true);
 
         LOGGER.info("Successfully loaded BlockRPG!");
+        LOGGER.info(String.format("Startup took %ss", round(timeMeasurer.stop() / 1000.0, 2)));
     }
 
     public static BlockRPG getInstance() {
@@ -110,6 +116,11 @@ public final class BlockRPG {
 
     public static ThreadManager getThreadManager() {
         return threadManager;
+    }
+
+    private static double round(double value, int precision) {
+        int scale = (int) Math.pow(10, precision);
+        return (double) Math.round(value * scale) / scale;
     }
 
     private void exit() {

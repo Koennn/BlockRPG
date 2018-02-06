@@ -1,5 +1,7 @@
-package me.koenn.blockrpg.items;
+package me.koenn.blockrpg.items.itemaction;
 
+import me.koenn.blockrpg.items.IItemAction;
+import me.koenn.blockrpg.items.ItemType;
 import me.koenn.blockrpg.util.HealthHelper;
 import me.koenn.blockrpg.util.RPGMessageEmbed;
 import net.dv8tion.jda.core.MessageBuilder;

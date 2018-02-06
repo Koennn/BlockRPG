@@ -25,17 +25,12 @@ public class BattleGenerator {
     public static final Cache<User, Texture> userAvatars = new Cache<>();
 
     private static final Font FONT = new Font("Arial", Font.BOLD, 20);
-    private static final Color COLOR = Color.BLACK;
-    private static Texture BACKGROUND;
+    private static final Color COLOR = new Color(200, 200, 200);
 
     private final Battle battle;
 
     public BattleGenerator(Battle battle) {
         this.battle = battle;
-    }
-
-    public static void loadTextures() {
-        BACKGROUND = new Texture("background", "bg.png");
     }
 
     public static BufferedImage readImage(String link) {

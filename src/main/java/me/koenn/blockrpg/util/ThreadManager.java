@@ -43,13 +43,14 @@ public class ThreadManager implements Thread.UncaughtExceptionHandler {
     public void disable() {
         this.logger.info("Stopping all threads...");
         this.enabled = false;
-        this.activeThreads.stream().filter(Thread::isAlive).forEach(Thread::interrupt);
 
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
-            logger.fatal("Error while waiting for threads to exit: " + e);
+            logger.fatal("Interrupted while waiting for threads to exit: " + e);
         }
+
+        this.activeThreads.stream().filter(Thread::isAlive).forEach(Thread::interrupt);
     }
 
     @Override

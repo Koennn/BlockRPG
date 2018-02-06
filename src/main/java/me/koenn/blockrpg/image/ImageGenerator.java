@@ -25,7 +25,7 @@ public class ImageGenerator {
     public static final String ENCODING = "UTF-8";
     public static final String FORMAT = "png";
     public static final String ERROR = "https://i.imgur.com/rhcd3l7.png";
-    public static final String LOCAL_URL = "http://play.blockgaming.org:8080/image?discordId=%s&id=%s&session=%s";
+    public static final String LOCAL_URL_FORMAT = "http://play.blockgaming.org:8080/image?discordId=%s&id=%s&session=%s";
     public static final String IMGUR_CLIENT_ID = "d56526adb592623";
 
     private final BufferedImage result;
@@ -129,6 +129,6 @@ public class ImageGenerator {
         ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
         ImageIO.write(image, FORMAT, byteArray);
         int id = ImageServer.putImage(user.getIdLong(), byteArray.toByteArray());
-        return String.format(LOCAL_URL, user.getIdLong(), id, ImageServer.SESSION);
+        return String.format(LOCAL_URL_FORMAT, user.getIdLong(), id, ImageServer.SESSION);
     }
 }
