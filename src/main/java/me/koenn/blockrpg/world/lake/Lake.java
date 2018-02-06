@@ -25,14 +25,15 @@ public class Lake implements TileType {
     @Override
     public String getDisplay() {
         return "**------------------------------------**\n" +
-                String.format(" %s fishes\n", this.fishes) +
+                String.format(" %sx :fish:\n", this.fishes) +
                 "**------------------------------------**\n" +
-                String.format("`Use %suse fishing rod to mine a resource.`", CommandManager.CMD_CHAR);
+                String.format("`Use %suse fishing rod to catch some fish.`", CommandManager.CMD_CHAR);
     }
 
     @Override
     public JSONObject getJSON() {
         JSONObject json = new JSONObject();
+        json.put("class", this.getClass().getName());
         json.put("fishes", this.fishes);
         return json;
     }

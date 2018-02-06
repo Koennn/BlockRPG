@@ -40,6 +40,10 @@ public class InfoCommand implements ICommand {
             return new MessageBuilder().setEmbed(new RPGMessageEmbed(String.format("%s is not a valid item", typeString), "", executor)).build();
         }
 
+        if (type == null) {
+            return new MessageBuilder().setEmbed(new RPGMessageEmbed(String.format("%s is not a valid item", typeString), "", executor)).build();
+        }
+
         return new MessageBuilder().setEmbed(new RPGMessageEmbed(
                 String.format("Information about %s %s", type.getName(), type.getEmote()),
                 String.format("```\n%s\n```", type.getDescription()),

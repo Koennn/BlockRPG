@@ -3,9 +3,9 @@ package me.koenn.blockrpg.commands;
 import me.koenn.blockrpg.BlockRPG;
 import me.koenn.blockrpg.items.Inventory;
 import me.koenn.blockrpg.items.ItemStack;
+import me.koenn.blockrpg.util.Checker;
 import me.koenn.blockrpg.util.RPGMessageEmbed;
 import me.koenn.blockrpg.util.WorldHelper;
-import me.koenn.blockrpg.world.Tile;
 import me.koenn.blockrpg.world.World;
 import me.koenn.blockrpg.world.village.Trade;
 import me.koenn.blockrpg.world.village.Village;
@@ -43,23 +43,19 @@ public class TradeCommand implements ICommand {
 
     @Override
     public Message execute(User executor, MessageChannel channel, String[] args) {
-        if (!WorldHelper.hasWorld(executor)) {
+        if (!Checker.checkHasWorld(executor)) {
             return new MessageBuilder().append("Use **\\stats** first to start playing!").build();
         }
-        World world = WorldHelper.getWorld(executor);
-        if (world == null) {
-            throw new NullPointerException("Unable to find users stats");
-        }
-
-        if (BlockRPG.getInstance().getUserBattles().get(executor.getIdLong()) != null) {
+        if (Checker.checkInBattle(executor)) {
             return new MessageBuilder().append("You are in a battle right now!").build();
         }
-        Tile tile = world.getTile(WorldHelper.getUserLocation(executor));
-        if (tile.getProperty("village") == null) {
+        World world = WorldHelper.getWorld(executor);
+        if (Checker.checkOnTile("village", executor, world)) {
             return new MessageBuilder().append("You not in a village right now!").build();
         }
-        Village village = (Village) tile.getProperty("village");
 
+
+        Village village = (Village) world.getTile(WorldHelper.getUserLocation(executor)).getProperty("village");
         if (args.length == 0) {
             return new MessageBuilder().setEmbed(new RPGMessageEmbed("Village", village.getDisplay(), executor)).build();
         } else {

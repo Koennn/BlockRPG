@@ -71,7 +71,7 @@ public class World {
     }
 
     public Message getBattle(User user, MessageChannel channel, Tile tile) {
-        if (!Chance.of(20)) {
+        if (!Chance.of(40)) {
             return null;
         }
         Battle battle = new Battle(user, channel, Creature.create(CreatureType.CREATURES.get("scary_monster")), tile);

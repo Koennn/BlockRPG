@@ -41,6 +41,9 @@ public class Inventory implements JSONConvertible {
     }
 
     public ItemStack getItemStack(ItemType type) {
+        if (type == null) {
+            return null;
+        }
         for (ItemStack stack : this.items) {
             if (stack.getType().getName().equals(type.getName())) {
                 return stack;

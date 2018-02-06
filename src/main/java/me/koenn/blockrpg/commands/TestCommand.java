@@ -1,7 +1,10 @@
 package me.koenn.blockrpg.commands;
 
 import me.koenn.blockrpg.BlockRPG;
-import me.koenn.blockrpg.battle.Battle;
+import me.koenn.blockrpg.items.Inventory;
+import me.koenn.blockrpg.items.ItemStack;
+import me.koenn.blockrpg.items.ItemType;
+import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
@@ -35,8 +38,8 @@ public class TestCommand implements ICommand {
 
     @Override
     public Message execute(User executor, MessageChannel channel, String[] args) {
-        Battle battle = BlockRPG.getInstance().getUserBattles().get(executor.getIdLong());
-        return battle.start();
+        ((Inventory) BlockRPG.getInstance().getStats(executor).get("inventory")).addItemStack(new ItemStack(ItemType.getItem("fishing_rod")));
+        return new MessageBuilder().append(":)").build();
     }
 
     @Override
