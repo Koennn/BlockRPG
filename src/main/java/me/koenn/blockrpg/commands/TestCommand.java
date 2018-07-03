@@ -1,6 +1,7 @@
 package me.koenn.blockrpg.commands;
 
 import me.koenn.blockrpg.BlockRPG;
+import me.koenn.blockrpg.data.Stats;
 import me.koenn.blockrpg.items.Inventory;
 import me.koenn.blockrpg.items.ItemStack;
 import me.koenn.blockrpg.items.ItemType;
@@ -38,7 +39,7 @@ public class TestCommand implements ICommand {
 
     @Override
     public Message execute(User executor, MessageChannel channel, String[] args) {
-        ((Inventory) BlockRPG.getInstance().getStats(executor).get("inventory")).addItemStack(new ItemStack(ItemType.getItem("fishing_rod")));
+        ((Inventory) BlockRPG.getInstance().getStats(executor).get(Stats.Type.INVENTORY)).addItemStack(new ItemStack(ItemType.getItem("fishing_rod")));
         return new MessageBuilder().append(":)").build();
     }
 

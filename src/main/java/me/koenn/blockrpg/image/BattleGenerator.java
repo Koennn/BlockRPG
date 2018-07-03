@@ -99,7 +99,7 @@ public class BattleGenerator {
             }
         }
 
-        String image = generator.generate(battle.getUser());
+        String image = generator.generate();
         cachedBattles.put(this.battle.getUser(), image);
         return image;
     }

@@ -15,6 +15,7 @@ import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
 
 import java.util.Random;
+import java.util.UUID;
 
 /**
  * <p>
@@ -73,11 +74,10 @@ public class ExploreCommand implements ICommand {
 
         WorldHelper.setUserLocation(executor, tile.getLocation());
         MapGenerator.cachedMaps.clearCache(executor);
-        String image = new MapGenerator(WorldHelper.getWorld(executor), executor).generate(executor);
-        return new MessageBuilder().setEmbed(new RPGMessageEmbed(
-                "You discovered a new tile:",
-                tile.toString(), executor
-        ).setImage(new MessageEmbed.ImageInfo(image, "", 500, 500))).build();
+        channel.sendFile(new MapGenerator(WorldHelper.getWorld(executor), executor).generateFile(),
+                UUID.randomUUID() + ".png",
+                new MessageBuilder().append(String.format("You discovered a new tile (`%s`):", tile.toString())).build());
+        return null;
     }
 
     @Override

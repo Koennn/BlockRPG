@@ -1,6 +1,7 @@
 package me.koenn.blockrpg.items.itemaction;
 
 import me.koenn.blockrpg.BlockRPG;
+import me.koenn.blockrpg.data.Stats;
 import me.koenn.blockrpg.items.IItemAction;
 import me.koenn.blockrpg.items.Inventory;
 import me.koenn.blockrpg.items.ItemStack;
@@ -46,7 +47,7 @@ public class FishingItemAction implements IItemAction {
         }
 
         ItemStack caughtFish = lake.fish();
-        ((Inventory) BlockRPG.getInstance().getStats(executor).get("inventory")).addItemStack(caughtFish);
+        ((Inventory) BlockRPG.getInstance().getStats(executor).get(Stats.Type.INVENTORY)).addItemStack(caughtFish);
 
         return new MessageBuilder().setEmbed(new RPGMessageEmbed(
                 String.format("You caught %sx %s", caught, caughtFish.getType().getName()),

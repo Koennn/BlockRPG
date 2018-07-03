@@ -1,6 +1,7 @@
 package me.koenn.blockrpg.util;
 
 import me.koenn.blockrpg.BlockRPG;
+import me.koenn.blockrpg.data.Stats;
 import net.dv8tion.jda.core.entities.User;
 
 public final class HealthHelper {
@@ -16,7 +17,7 @@ public final class HealthHelper {
     }
 
     public static int getHealth(User user) {
-        return Integer.parseInt(String.valueOf(BlockRPG.getInstance().getStats(user).get("health")));
+        return Integer.parseInt(String.valueOf(BlockRPG.getInstance().getStats(user).get(Stats.Type.HEALTH)));
     }
 
     public static void setHealth(User user, int health) {

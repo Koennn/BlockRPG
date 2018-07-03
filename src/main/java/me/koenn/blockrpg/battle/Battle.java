@@ -2,11 +2,13 @@ package me.koenn.blockrpg.battle;
 
 import me.koenn.blockrpg.BlockRPG;
 import me.koenn.blockrpg.battle.creature.Creature;
+import me.koenn.blockrpg.data.Stats;
 import me.koenn.blockrpg.image.BattleGenerator;
 import me.koenn.blockrpg.image.MapGenerator;
 import me.koenn.blockrpg.items.IWeaponAction;
 import me.koenn.blockrpg.items.Inventory;
 import me.koenn.blockrpg.items.ItemStack;
+import me.koenn.blockrpg.util.HealthHelper;
 import me.koenn.blockrpg.util.RPGMessageEmbed;
 import me.koenn.blockrpg.util.ThreadHelper;
 import me.koenn.blockrpg.util.WorldHelper;
@@ -43,7 +45,7 @@ public class Battle {
         this.channel = channel;
         this.opponent = opponent;
         this.location = location;
-        this.userHealth = Integer.valueOf(String.valueOf(BlockRPG.getInstance().getStats(user).get("health")));
+        this.userHealth = HealthHelper.getHealth(user);
     }
 
     private static void sendExplored(MessageChannel channel, Battle battle) {
@@ -58,7 +60,7 @@ public class Battle {
 
     public Message start() {
         int index = 1;
-        for (ItemStack item : ((Inventory) BlockRPG.getInstance().getStats(user).get("inventory")).getItems()) {
+        for (ItemStack item : ((Inventory) BlockRPG.getInstance().getStats(user).get(Stats.Type.INVENTORY)).getItems()) {
             if (item.getType().getActions() != null) {
                 for (IWeaponAction action : item.getType().getActions()) {
                     userMoves.put(index, action);
@@ -118,13 +120,15 @@ public class Battle {
             }
 
             ItemStack loot = this.opponent.getType().getLootTable().getLoot();
-            ((Inventory) BlockRPG.getInstance().getStats(this.user).get("inventory")).addItemStack(loot);
+            Stats stats = BlockRPG.getInstance().getStats(this.user);
+            ((Inventory) stats.get(Stats.Type.INVENTORY)).addItemStack(loot);
             WorldHelper.setUserLocation(this.user, this.location.getLocation());
             channel.sendMessage(new MessageBuilder().setEmbed(new RPGMessageEmbed(
                     String.format("You killed %s", this.opponent.getType().getName()),
                     String.format("**Your health:** %s\n**Loot received:** %s", this.userHealth, loot.toString()),
                     this.user
             )).build()).queue();
+            stats.add(Stats.Type.KILLS, 1);
             return true;
         }
         return false;

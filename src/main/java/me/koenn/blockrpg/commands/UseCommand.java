@@ -1,6 +1,7 @@
 package me.koenn.blockrpg.commands;
 
 import me.koenn.blockrpg.BlockRPG;
+import me.koenn.blockrpg.data.Stats;
 import me.koenn.blockrpg.items.Inventory;
 import me.koenn.blockrpg.items.ItemStack;
 import me.koenn.blockrpg.items.ItemType;
@@ -47,7 +48,7 @@ public class UseCommand implements ICommand {
             return new MessageBuilder().setEmbed(new RPGMessageEmbed(String.format("%s is not a valid item", typeString), "", executor)).build();
         }
 
-        Inventory inventory = (Inventory) BlockRPG.getInstance().getStats(executor).get("inventory");
+        Inventory inventory = (Inventory) BlockRPG.getInstance().getStats(executor).get(Stats.Type.INVENTORY);
         if (!inventory.hasItem(type)) {
             return new MessageBuilder().setEmbed(new RPGMessageEmbed(String.format("You don't have a %s", type.getName()), "", executor)).build();
         }

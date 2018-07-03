@@ -21,13 +21,13 @@ public class Stats {
 
     public Stats(long userId) {
         this.userId = userId;
-        this.stats.put("health", 100);
-        this.stats.put("inventory", new Inventory());
-        this.stats.put("weapon", null);
-        this.stats.put("level", 1);
-        this.stats.put("kills", 0);
-        this.stats.put("deaths", 0);
-        this.stats.put("skillPoints", new SkillPoints());
+        this.stats.put(Type.HEALTH, 100);
+        this.stats.put(Type.INVENTORY, new Inventory());
+        this.stats.put(Type.WEAPON, null);
+        this.stats.put(Type.LEVEL, 1);
+        this.stats.put(Type.KILLS, 0);
+        this.stats.put(Type.DEATHS, 0);
+        this.stats.put(Type.SKILLPOINTS, new SkillPoints());
         this.stats.put("userId", userId);
     }
 
@@ -89,7 +89,21 @@ public class Stats {
         this.stats.put(name, obj);
     }
 
+    public void add(String name, int amount) {
+        this.stats.put(name, (int) this.stats.get(name) + amount);
+    }
+
     public long getUserId() {
         return userId;
+    }
+
+    public static final class Type {
+        public static final String HEALTH = "health";
+        public static final String INVENTORY = "inventory";
+        public static final String WEAPON = "weapon";
+        public static final String LEVEL = "level";
+        public static final String KILLS = "kills";
+        public static final String DEATHS = "deaths";
+        public static final String SKILLPOINTS = "skillpoints";
     }
 }

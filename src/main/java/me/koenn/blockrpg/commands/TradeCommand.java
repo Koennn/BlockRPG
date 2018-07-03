@@ -1,6 +1,7 @@
 package me.koenn.blockrpg.commands;
 
 import me.koenn.blockrpg.BlockRPG;
+import me.koenn.blockrpg.data.Stats;
 import me.koenn.blockrpg.items.Inventory;
 import me.koenn.blockrpg.items.ItemStack;
 import me.koenn.blockrpg.util.Checker;
@@ -70,7 +71,7 @@ public class TradeCommand implements ICommand {
             }
 
             Trade trade = village.getTrades().get(id);
-            Inventory inventory = (Inventory) BlockRPG.getInstance().getStats(executor).get("inventory");
+            Inventory inventory = (Inventory) BlockRPG.getInstance().getStats(executor).get(Stats.Type.INVENTORY);
 
             ItemStack cost = trade.getCost();
             ItemStack offer = trade.getOffer();

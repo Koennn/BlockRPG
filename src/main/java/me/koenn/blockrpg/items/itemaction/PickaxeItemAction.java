@@ -1,6 +1,7 @@
 package me.koenn.blockrpg.items.itemaction;
 
 import me.koenn.blockrpg.BlockRPG;
+import me.koenn.blockrpg.data.Stats;
 import me.koenn.blockrpg.items.IItemAction;
 import me.koenn.blockrpg.items.Inventory;
 import me.koenn.blockrpg.items.ItemStack;
@@ -56,7 +57,7 @@ public class PickaxeItemAction implements IItemAction {
         }
 
         ItemStack minedItems = mine.mine(mined);
-        ((Inventory) BlockRPG.getInstance().getStats(executor).get("inventory")).addItemStack(minedItems);
+        ((Inventory) BlockRPG.getInstance().getStats(executor).get(Stats.Type.INVENTORY)).addItemStack(minedItems);
 
         return new MessageBuilder().setEmbed(new RPGMessageEmbed(
                 String.format("You mined %sx %s", mined, minedItems.getType().getName()),

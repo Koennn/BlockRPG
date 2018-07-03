@@ -38,6 +38,21 @@ public class MapGenerator {
         LAKE_TILE = new Texture("lake_tile", "lake_tile.png");
     }
 
+    public byte[] generateFile() {
+        ImageGenerator generator = new ImageGenerator(503, 503);
+        int realX, realY = 3;
+        for (int y = 0; y < 10; y++) {
+            realX = 3;
+            for (int x = 0; x < 10; x++) {
+                Vector2 tile = translate(realX, realY);
+                generator.draw(realX, realY, getTileTexture(tile));
+                realX += 50;
+            }
+            realY += 50;
+        }
+        return generator.generateFile();
+    }
+
     public String generate(User owner) {
         return this.generate(owner, false);
     }
@@ -60,7 +75,7 @@ public class MapGenerator {
             }
             realY += 50;
         }
-        String image = generator.generate(owner);
+        String image = generator.generate();
         cachedMaps.put(owner, image);
         return image;
     }

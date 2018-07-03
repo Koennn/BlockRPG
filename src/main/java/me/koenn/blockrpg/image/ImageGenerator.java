@@ -2,7 +2,6 @@ package me.koenn.blockrpg.image;
 
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import me.koenn.blockrpg.BlockRPG;
-import net.dv8tion.jda.core.entities.User;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -63,9 +62,19 @@ public class ImageGenerator {
         this.graphics.clearRect(x, y, width, height);
     }
 
-    public String generate(User user) {
+    public byte[] generateFile() {
+        ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
         try {
-            return BlockRPG.ENABLE_LOCAL_SERVER ? uploadLocal(this.result, user) : upload(this.result, 0);
+            ImageIO.write(this.result, FORMAT, byteArray);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return byteArray.toByteArray();
+    }
+
+    public String generate() {
+        try {
+            return upload(this.result, 0);
         } catch (Exception e) {
             e.printStackTrace();
             return ERROR;
@@ -114,7 +123,7 @@ public class ImageGenerator {
             if (attempts == 5) {
                 return ERROR;
             }
-            BlockRPG.LOGGER.warn("Imgur is being a bitch, retrying in 1s...");
+            BlockRPG.LOGGER.warn("Imgur is rate-limiting us, retrying in 1s...");
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -123,12 +132,5 @@ public class ImageGenerator {
 
             return upload(image, ++attempts);
         }
-    }
-
-    private String uploadLocal(BufferedImage image, User user) throws IOException {
-        ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
-        ImageIO.write(image, FORMAT, byteArray);
-        int id = ImageServer.putImage(user.getIdLong(), byteArray.toByteArray());
-        return String.format(LOCAL_URL_FORMAT, user.getIdLong(), id, ImageServer.SESSION);
     }
 }

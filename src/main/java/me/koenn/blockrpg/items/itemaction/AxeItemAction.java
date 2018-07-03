@@ -1,6 +1,7 @@
 package me.koenn.blockrpg.items.itemaction;
 
 import me.koenn.blockrpg.BlockRPG;
+import me.koenn.blockrpg.data.Stats;
 import me.koenn.blockrpg.items.IItemAction;
 import me.koenn.blockrpg.items.Inventory;
 import me.koenn.blockrpg.items.ItemStack;
@@ -53,7 +54,7 @@ public class AxeItemAction implements IItemAction {
         }
 
         ItemStack wood = forest.chop(chopped);
-        ((Inventory) BlockRPG.getInstance().getStats(executor).get("inventory")).addItemStack(wood);
+        ((Inventory) BlockRPG.getInstance().getStats(executor).get(Stats.Type.INVENTORY)).addItemStack(wood);
 
         return new MessageBuilder().setEmbed(new RPGMessageEmbed(
                 String.format("You chopped %sx %s", chopped, wood.getType().getName()),
